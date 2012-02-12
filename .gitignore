@@ -25,6 +25,6 @@ local.properties
 
 *.out
 
-MeetMeServer/.settings
+.settings
 
 
