@@ -10,7 +10,7 @@ import com.mysql.jdbc.Connection;
 public final class SqlUtils {
 
 	private static Logger logger = Logger.getLogger(SqlUtils.class);
-	private static final String DBURL = "jdbc:mysql://localhost:3306/meetme?user=user&password=user";
+	private static final String DBURL = "jdbc:mysql://localhost:3306/meetme?user=meetme&password=5XmxQhnB44t3QneG";
 	
 	public static Connection getConnection() {
 		// initialize SqlUtils
