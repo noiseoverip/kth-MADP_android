@@ -1,8 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:textColor="@android:color/black" >
+
+      <RelativeLayout
+        android:id="@+id/Header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp" >
+
+        <TextView
+            android:id="@+id/infolabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:text="@string/listtoptext"
+            android:textColor="#3ba9ff"
+            android:textSize="35sp" >
+        </TextView>
+    </RelativeLayout>
+
+    <!-- Lägg all info HÄR!!!!! -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/time"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/time" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/meetingtime"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="right"
+            android:text="23:59"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/date"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/date" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/meetingdate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="right"
+            android:text="07/02/2012"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/alarm"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/alarm" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/alarmtime"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="right"
+            android:text="23:30"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/location"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/world" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/locationview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="right"
+            android:text="Kärrvägen 4A"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="0dp"
+            android:gravity="right"
+            android:text="Participants:"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+        <!-- Sluta lägga all info HÄR!!!!! -->
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000000" >
+
+            <ListView
+                android:id="@+id/android:list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="1dp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        style="@android:style/ButtonBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/Header"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <ImageButton
+                android:id="@+id/update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@null"
+                android:src="@drawable/plus" >
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/gotomap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="100dp"
+                android:layout_marginTop="2dp"
+                android:background="@null"
+                android:src="@drawable/world" >
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/cancelmeeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="2dp"
+                android:background="@null"
+                android:src="@drawable/delete" >
+            </ImageButton>
+        </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

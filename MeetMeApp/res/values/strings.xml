@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, MeetMeActivity!</string>
+    <string name="hello">Hello World, MeetMe!</string>
     <string name="app_name">MeetMe</string>
-
+    <string name="main_no_items">No meetings to display</string>
+    <string name="listtoptext">Your Meetings</string>
 </resources>
