@@ -1,8 +1,10 @@
 package com.madp.meetme;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
 import com.madp.utils.MeetingsListAdapter;
+import com.madp.utils.SerializerHelper;
 
 //TODO: add logs for debugging
 //TODO: refreshList() should be done on a separate thread and should display progress
@@ -29,26 +32,32 @@ import com.madp.utils.MeetingsListAdapter;
  */
 public class MeetingsListActivity extends ListActivity {	
 	private final String TAG = "MeetingListActivity";
-	private List<Meeting> meetings = null;
+	private List<Meeting> meetings  = new ArrayList();;
 	private MeetingsListAdapter listAdapter;
 	private ImageButton newMeetingButton, exitButton;
 	private static final int CREATE_NEW_MEETING_RESULT = 891030;
 	private static final int CLICK_ON_MEETING_LIST_ELEMENT_RESULT = 860604;
 	private WebService ws;
+	
+	
+	
+	
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.meetinglist);
 
-		/* Create important stuff */
+		
 		ws = new WebService(new Logger());
 		
 		newMeetingButton = (ImageButton) findViewById(R.id.new_meeting_button);
 		exitButton = (ImageButton) findViewById(R.id.logout);
 
-		refreshList();
-
+		
+		if(meetings == null)
+			refreshList();
 		if (meetings != null) {
 			listAdapter = new MeetingsListAdapter(this, R.layout.meetingrow, meetings);
 			setListAdapter(listAdapter);
@@ -65,7 +74,8 @@ public class MeetingsListActivity extends ListActivity {
 		this.getListView().setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 				Intent intent = new Intent(arg1.getContext(), MeetingInfoActivity.class);
-				intent.putExtra("meetingId", meetings.get(position).getId());
+				Bundle b=new Bundle();
+				b.putByteArray("meeting", SerializerHelper.serializeObject(meetings.get(position)));				
 				startActivityForResult(intent, CLICK_ON_MEETING_LIST_ELEMENT_RESULT);
 			}
 		});
@@ -79,6 +89,7 @@ public class MeetingsListActivity extends ListActivity {
 		});
 	}
 
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, "Result code received:"+resultCode);
@@ -86,7 +97,17 @@ public class MeetingsListActivity extends ListActivity {
 		refreshList();
 		if (requestCode == CREATE_NEW_MEETING_RESULT) {
 			if (resultCode == RESULT_OK) { 
-				
+				Bundle b = data.getExtras();
+				if(b != null){
+					Meeting s = (Meeting) SerializerHelper.deserializeObject(b.getByteArray("meeting"));
+					meetings.add(s);
+					listAdapter = new MeetingsListAdapter(this, R.layout.meetingrow, meetings);
+					setListAdapter(listAdapter);
+					listAdapter.setItems(meetings);
+					listAdapter.notifyDataSetChanged();
+					
+
+				}
 			}
 		} else if (requestCode == CLICK_ON_MEETING_LIST_ELEMENT_RESULT) {
 			// Meeting deletion and update should be performed in MeetingInfo
@@ -96,6 +117,8 @@ public class MeetingsListActivity extends ListActivity {
 	/**
 	 * Fetch meetings from server
 	 */
+	
+	
 	private void refreshList() {
 		List<Meeting> meetingsTmp = ws.getMeetings(0, 100);
 		if (meetingsTmp != null) {
@@ -105,5 +128,6 @@ public class MeetingsListActivity extends ListActivity {
 				listAdapter.notifyDataSetChanged();
 			}
 		}
+		
 	}
 }

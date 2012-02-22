@@ -1,12 +1,17 @@
 package com.madp.meetme.common.entities;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 /**
  * User object. Contain all user related information like: usename, user email, user location...
  * 
  * @author esauali
  * 
  */
-public class User {
+public class User implements Serializable{
 	int id;
 	String name;
 	String email;
@@ -80,5 +85,18 @@ public class User {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException,IOException {
+		aInputStream.defaultReadObject();
+	}
+
+	/**
+	* This is the default implementation of writeObject. Customise if
+	* necessary.
+	*/
+	private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+	// perform the default serialization for all non-transient, non-static
+	// fields
+	aOutputStream.defaultWriteObject();
 	}
 }

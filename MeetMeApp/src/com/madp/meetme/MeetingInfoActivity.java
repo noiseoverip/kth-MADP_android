@@ -15,6 +15,7 @@ import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
 import com.madp.utils.ParticipantsAdapter;
+import com.madp.utils.SerializerHelper;
 
 /**
  * Activity for displaying Meeting information
@@ -46,7 +47,10 @@ public class MeetingInfoActivity extends ListActivity {
 		ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
 
 		Bundle extras = getIntent().getExtras();
-		final int meetingId = extras.getInt("meetingId");
+		meeting= (Meeting) SerializerHelper.deserializeObject(extras.getByteArray("meetingId"));
+		
+		
+/*		final int meetingId = extras.getInt("meetingId");
 		if (meetingId > 0) {
 			refreshMeetingInfo(meetingId);
 			if (meeting == null) {
@@ -58,7 +62,8 @@ public class MeetingInfoActivity extends ListActivity {
 			Log.e(TAG, "Required extras not provided, missing meetingId");
 			this.finish();
 		}
-
+*/
+		
 		this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
 		getListView().setAdapter(p_adapter);
 

@@ -25,6 +25,7 @@ import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
 import com.madp.utils.ParticipantsAdapter;
+import com.madp.utils.SerializerHelper;
 
 //TODO: we should probably have one activity for creating new meeting, updating it and displaying it's info
 /**
@@ -99,6 +100,12 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setLatitude(3.3); //TODO: to be implemented
 				meeting.setLongitude(2.2); //TODO: to be implemented
 				meeting.setOwner(new User(0, "", "demo@gmail.com"));
+				
+				Intent intent = new Intent(view.getContext(), MeetingsListActivity.class);
+				Bundle s = new Bundle();
+				s.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+				intent.putExtras(s);
+				setResult(RESULT_OK, intent);
 				ws.postMeeting(meeting);
 				finish();
 			}
