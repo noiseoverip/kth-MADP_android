@@ -10,6 +10,7 @@ import android.util.Log;
 
 /* need this class to easily handle the coordinates of meetings and persons
  * when they are show in the map*/
+
 public class LatLonPoint implements Serializable {
     int lat;
     int lon;
