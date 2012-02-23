@@ -28,6 +28,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="6dp"
+            android:layout_marginLeft="5dp"
             android:gravity="center_vertical"
             android:textColor="#000000"/>
 
