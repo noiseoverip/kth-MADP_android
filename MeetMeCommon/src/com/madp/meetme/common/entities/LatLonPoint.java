@@ -12,7 +12,11 @@ import android.util.Log;
  * when they are show in the map*/
 
 public class LatLonPoint implements Serializable {
-    int lat;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4119420152413060192L;
+	int lat;
     int lon;
 	public LatLonPoint(double latitude, double longitude) {
         lat = (int)(latitude * 1E6);

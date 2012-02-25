@@ -29,6 +29,10 @@ import android.util.Log;
  * 
  */
 public class Meeting implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5945827205183259723L;
 	private int id;
 	private String title;
 	private String tCreated; // creation date
@@ -36,8 +40,7 @@ public class Meeting implements Serializable{
 	private int duration; // duration in minutes
 	private int monitoring; // minuted before starting to start monitoring
 	private String address;
-	private double longitude;
-	private double latitude;	
+	private LatLonPoint coordinates;	
 	private List<User> participants;
 	private User owner;	// meeting creator
 	
@@ -55,8 +58,7 @@ public class Meeting implements Serializable{
 		this.duration = duration;
 		this.monitoring = monitoring;
 		this.address = address;
-		this.longitude = longitude;
-		this.latitude = latitude;
+		coordinates = getLatLong(getLocationInfo(address));
 		this.owner = owner;
 		this.participants = new ArrayList<User>();
 	}
@@ -73,12 +75,12 @@ public class Meeting implements Serializable{
 		return id;
 	}
 
-	public double getLatitude() {
-		return latitude;
+	public LatLonPoint getCoordinates() {
+		return coordinates;
 	}
 
-	public double getLongitude() {
-		return longitude;
+	public void setCoordinates(LatLonPoint coordinates) {
+		this.coordinates = coordinates;
 	}
 
 	public int getMonitoring() {
@@ -107,6 +109,7 @@ public class Meeting implements Serializable{
 
 	public void setAddress(String address) {
 		this.address = address;
+		this.coordinates = getLatLong(getLocationInfo(address));
 	}
 
 	public void setDuration(int duration) {
@@ -115,14 +118,6 @@ public class Meeting implements Serializable{
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
 	}
 
 	public void setMonitoring(int monitoring) {
@@ -209,6 +204,7 @@ public class Meeting implements Serializable{
 
         }
 
+        Log.i("coordinates::","Lat = "+lat+" Lon = "+lon);
         return new LatLonPoint(lat,lon);
     }
 	

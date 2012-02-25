@@ -8,7 +8,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
 import android.util.Log;
-
+import com.madp.meetme.common.*;
 public class SerializerHelper {
 	public static byte[] serializeObject(Object o) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

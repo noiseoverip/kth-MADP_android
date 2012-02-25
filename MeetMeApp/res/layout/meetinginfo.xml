@@ -117,8 +117,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <ImageView
-            android:id="@+id/location"
+        <ImageButton
+            android:id="@+id/iblocation"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginBottom="5dp"
@@ -126,7 +126,7 @@
             android:layout_marginTop="5dp"
             android:background="@null"
             android:src="@drawable/world" >
-        </ImageView>
+        </ImageButton>
 
         <TextView
             android:id="@+id/locationview"

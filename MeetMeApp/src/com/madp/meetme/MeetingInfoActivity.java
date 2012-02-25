@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.madp.maps.GPSFindLocationFromStringOnMap;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
@@ -45,35 +47,44 @@ public class MeetingInfoActivity extends ListActivity {
 		TextView locationlabel = (TextView) findViewById(R.id.locationview);
 		ImageButton cancelMeeting = (ImageButton) findViewById(R.id.cancelmeeting);
 		ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
-
+		ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
+		byte [] a=null;
+		
 		Bundle extras = getIntent().getExtras();
-		meeting= (Meeting) SerializerHelper.deserializeObject(extras.getByteArray("meetingId"));
-		
-		
-/*		final int meetingId = extras.getInt("meetingId");
-		if (meetingId > 0) {
-			refreshMeetingInfo(meetingId);
-			if (meeting == null) {
-				Log.e(TAG, "Could not retrieve meeting info from server");
-				this.finish();
-			}
-
-		} else {
-			Log.e(TAG, "Required extras not provided, missing meetingId");
-			this.finish();
+		if(extras != null)
+			 a= extras.getByteArray("meeting");
+		else
+			Log.e("extras","no bundle in the intent");
+		if(a == null)
+			Log.e("getByteArray", "no extras tagged as meeting");
+		else{
+			meeting= (Meeting) SerializerHelper.deserializeObject(a);
+					
+			this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
+			getListView().setAdapter(p_adapter);
+			
+			/* Set meeting info */
+			infolabel.setText(meeting.getTitle());
+			timelabel.setText(meeting.gettStarting());
+			datelabel.setText(meeting.gettStarting()); // TODO: deal with this, date and time is one thing...
+			locationlabel.setText(meeting.getAddress());
+			sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
 		}
-*/
+		mapbutton.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent myintent = new Intent(v.getContext(),com.madp.maps.GPSFindLocationFromStringOnMap.class);
+				
+				Bundle b = new Bundle();
+				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+				myintent.putExtras(b);
+				startActivity(myintent);
+			}
+		});
 		
-		this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
-		getListView().setAdapter(p_adapter);
-
-		/* Set meeting info */
-		infolabel.setText(meeting.getTitle());
-		timelabel.setText(meeting.gettStarting());
-		datelabel.setText(meeting.gettStarting()); // TODO: deal with this, date and time is one thing...
-		locationlabel.setText(meeting.getAddress());
-		sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
-
+		
+		
 		cancelMeeting.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {

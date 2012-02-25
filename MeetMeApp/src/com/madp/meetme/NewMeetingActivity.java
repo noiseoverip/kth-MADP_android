@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
@@ -97,8 +98,6 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setDuration(60); //TODO: to be implemented
 				meeting.setMonitoring(20); //TODO: to be implemented				
 				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
-				meeting.setLatitude(3.3); //TODO: to be implemented
-				meeting.setLongitude(2.2); //TODO: to be implemented
 				meeting.setOwner(new User(0, "", "demo@gmail.com"));
 				
 				Intent intent = new Intent(view.getContext(), MeetingsListActivity.class);

@@ -12,13 +12,15 @@ import java.io.Serializable;
  * 
  */
 public class User implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2061673643035123774L;
 	int id;
 	String name;
 	String email;
 	String time; // last location update time
-	Double longitude;
-	Double latitude;
-
+	LatLonPoint coordinates;
 	/**
 	 * Default constuctor
 	 */
@@ -47,12 +49,13 @@ public class User implements Serializable{
 		return id;
 	}
 
-	public Double getLatitude() {
-		return latitude;
+	
+	public LatLonPoint getCoordinates() {
+		return coordinates;
 	}
 
-	public Double getLongitude() {
-		return longitude;
+	public void setCoordinates(LatLonPoint coordinates) {
+		this.coordinates = coordinates;
 	}
 
 	public String getName() {
@@ -69,14 +72,6 @@ public class User implements Serializable{
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
 	}
 
 	public void setName(String name) {

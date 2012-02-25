@@ -12,9 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.madp.meetme.R;
-import com.madp.meetme.common.entities.User;
 
+import com.madp.meetme.common.entities.User;
+import com.madp.meetme.common.*;
 public class ParticipantsAdapter extends ArrayAdapter<User>{
 	private final String TAG = "participantAdapter";
 	private List<User> participants;

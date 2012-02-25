@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.madp.meetme.R;
 import com.madp.meetme.common.entities.Meeting;
-
+import com.madp.meetme.common.*;
 
 /* Code built on http://www.softwarepassion.com/android-series-custom-listview-items-and-adapters/ */
 public class MeetingsListAdapter extends ArrayAdapter<Meeting> {

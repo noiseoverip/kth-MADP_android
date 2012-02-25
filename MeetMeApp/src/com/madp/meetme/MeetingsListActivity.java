@@ -3,6 +3,7 @@ package com.madp.meetme;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -32,16 +33,12 @@ import com.madp.utils.SerializerHelper;
  */
 public class MeetingsListActivity extends ListActivity {	
 	private final String TAG = "MeetingListActivity";
-	private List<Meeting> meetings  = new ArrayList();;
+	private List<Meeting> meetings  = new ArrayList();
 	private MeetingsListAdapter listAdapter;
 	private ImageButton newMeetingButton, exitButton;
 	private static final int CREATE_NEW_MEETING_RESULT = 891030;
 	private static final int CLICK_ON_MEETING_LIST_ELEMENT_RESULT = 860604;
 	private WebService ws;
-	
-	
-	
-	
 	
 
 	@Override
@@ -73,10 +70,14 @@ public class MeetingsListActivity extends ListActivity {
 		/* Click on a listitem */
 		this.getListView().setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				
 				Intent intent = new Intent(arg1.getContext(), MeetingInfoActivity.class);
 				Bundle b=new Bundle();
-				b.putByteArray("meeting", SerializerHelper.serializeObject(meetings.get(position)));				
+				b.putByteArray("meeting", SerializerHelper.serializeObject(meetings.get(position)));			
+				intent.putExtras(b);
 				startActivityForResult(intent, CLICK_ON_MEETING_LIST_ELEMENT_RESULT);
+			
+				
 			}
 		});
 
