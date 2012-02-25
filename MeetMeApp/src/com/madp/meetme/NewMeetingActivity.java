@@ -11,9 +11,11 @@ import android.app.ListActivity;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
 import com.madp.utils.ParticipantsAdapter;
 import com.madp.utils.SerializerHelper;
+import com.madp.utils.Statics;
 
 //TODO: we should probably have one activity for creating new meeting, updating it and displaying it's info
 /**
@@ -103,7 +106,12 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
 				meeting.setLatitude(3.3); // TODO: to be implemented
 				meeting.setLongitude(2.2); // TODO: to be implemented
-				meeting.setOwner(new User(0, "", "demo@gmail.com"));
+
+				// Set owner
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+				User owner = new User(0, prefs.getString(Statics.USERNAME, null), prefs.getString(Statics.USEREMAIL,
+						null));
+				meeting.setOwner(owner);				
 
 				Intent intent = new Intent(view.getContext(), MeetingsListActivity.class);
 				Bundle s = new Bundle();
