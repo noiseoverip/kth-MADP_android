@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/meetingInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/showMeetingInfo"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Show more info..." />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginTop="100dp">
+
+        <Button
+            android:id="@+id/reject"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Reject" android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/accept"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Accept" android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/showLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Show my location" android:layout_gravity="center"/>
+
+</LinearLayout>

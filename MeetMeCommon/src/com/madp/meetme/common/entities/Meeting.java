@@ -40,6 +40,8 @@ public class Meeting implements Serializable{
 	private int duration; // duration in minutes
 	private int monitoring; // minuted before starting to start monitoring
 	private String address;
+	private double latitude;
+	private double longitude;
 	private LatLonPoint coordinates;	
 	private List<User> participants;
 	private User owner;	// meeting creator
@@ -58,6 +60,8 @@ public class Meeting implements Serializable{
 		this.duration = duration;
 		this.monitoring = monitoring;
 		this.address = address;
+		this.latitude =latitude;
+		this.longitude =longitude;
 		coordinates = getLatLong(getLocationInfo(address));
 		this.owner = owner;
 		this.participants = new ArrayList<User>();
