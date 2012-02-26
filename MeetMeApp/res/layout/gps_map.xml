@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+ 	
+ 	<FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+    <com.google.android.maps.MapView 
+        android:id="@+id/mapView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:clickable="true"
+        android:apiKey="09OE9Gq7m7-tNsyR2iFURoCUzyEvr9ZiVTBAyTw"
+        />
+    </FrameLayout>
+    <LinearLayout
+        style="@android:style/ButtonBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/ib_map_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:src="@drawable/deletesmall" >
+        </ImageButton>
+    </LinearLayout>
+    
+    
+
+</LinearLayout>
