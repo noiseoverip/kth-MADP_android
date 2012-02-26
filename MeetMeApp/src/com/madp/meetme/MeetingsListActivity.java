@@ -105,7 +105,9 @@ public class MeetingsListActivity extends ListActivity {
 		/* Implement listers for buttons and a Item in the list */
 		exitButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				finish();
+				Intent intent = new Intent(v.getContext(), MeetMeBackgroundActivity.class);
+				startActivity(intent);
+				//finish();
 			}
 		});
 
