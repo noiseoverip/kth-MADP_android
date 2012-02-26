@@ -21,6 +21,8 @@ public class User implements Serializable{
 	String email;
 	String time; // last location update time
 	LatLonPoint coordinates;
+	double latitude;
+	double longitude;
 	/**
 	 * Default constuctor
 	 */
@@ -50,6 +52,25 @@ public class User implements Serializable{
 	}
 
 	
+	
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.coordinates = new LatLonPoint( latitude, this.longitude);
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.coordinates = new LatLonPoint( this.latitude, longitude);
+		this.longitude = longitude;
+	}
+
 	public LatLonPoint getCoordinates() {
 		return coordinates;
 	}
