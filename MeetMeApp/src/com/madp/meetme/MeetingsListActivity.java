@@ -2,12 +2,9 @@ package com.madp.meetme;
 
 import java.util.List;
 
-
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
