@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.madp.maps.GPSFindLocationFromStringOnMap;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
@@ -72,6 +71,7 @@ public class MeetingInfoActivity extends ListActivity {
 		}
 		mapbutton.setOnClickListener(new View.OnClickListener() {
 			
+			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent myintent = new Intent(v.getContext(),com.madp.maps.GPSFindLocationFromStringOnMap.class);
@@ -87,16 +87,19 @@ public class MeetingInfoActivity extends ListActivity {
 		
 		cancelMeeting.setOnClickListener(new OnClickListener() {
 
+			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 				builder.setMessage("Are you sure you want to delete this meeting?").setCancelable(false)
 						.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								/* Update email list on server to exclude this user */
 								// /TODO: to be implemented in WebService
 								finish();
 							}
 						}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.cancel();
 							}
@@ -107,6 +110,7 @@ public class MeetingInfoActivity extends ListActivity {
 		});
 
 		updateAndExit.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				int i = 0;
 				// TODO: to be implemented in WebService
@@ -118,33 +122,35 @@ public class MeetingInfoActivity extends ListActivity {
 
 	// /TODO: should be fixed to support two arguments: starting date time (e.g '2012-02-02 11:50') and number of
 	// minutes to start alarm before the meeting.
-	public static String calculateAlarmTime(String meetingTime) {
-
+	public static String calculateAlarmTime(String meetingTime, int minutes){
+		
 		char[] time = meetingTime.toCharArray();
 		String hour = time[0] + "" + time[1];
-		String min = time[3] + "" + time[4];
-
+		String min = time[3] + ""+ time[4];
+		
 		int timeHour = Integer.valueOf(hour);
 		int timeMin = Integer.valueOf(min);
-		if (timeMin >= 15) {
-			if (timeHour == 0) {
-				if ((timeMin - 15) == 0) {
-					return "00" + ":" + (timeMin - 15) + "0";
+		if(timeMin >= minutes){	
+			if(timeHour ==0){
+				if((timeMin-minutes)==0){
+					return "00" + ":" + (timeMin-minutes)+"0";
 				}
-				return "00" + ":" + (timeMin - 15);
+				return "00" + ":" + (timeMin-minutes);	
 			}
-
-			if ((timeMin - 15) == 0) {
-				return timeHour + ":" + (timeMin - 15) + "0";
+			
+			if((timeMin-minutes)==0){
+				return timeHour + ":" + (timeMin-minutes)+"0";
 			}
-			return timeHour + ":" + (timeMin - 15);
-		} else {
-			if ((timeHour - 1) == 0) {
-				return (timeHour - 1) + "0" + ":" + (timeMin + 45);
-			} else if (timeHour == 0) {
-				return "23:" + (timeMin + 45);
+			return timeHour + ":" + (timeMin-minutes);
+ 		}
+		else{
+			if((timeHour-1 ) == 0){
+				return (timeHour-1) +"0" +":" + (timeMin+(60-minutes));
 			}
-			return (timeHour - 1) + ":" + (timeMin + 45);
+			else if(timeHour == 0){
+				return "23:"+ (timeMin+(60-minutes));
+			}
+			return (timeHour-1) +":" + (timeMin+(60-minutes));
 		}
 	}
 

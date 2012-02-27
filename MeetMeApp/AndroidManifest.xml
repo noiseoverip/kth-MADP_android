@@ -72,8 +72,9 @@
         </activity>
        
         <service android:name="BackgroundMeetingManager"></service>
-		
 
+        <receiver android:name=".MeetingAlarmManager" />
+        
     </application>
 
 </manifest>

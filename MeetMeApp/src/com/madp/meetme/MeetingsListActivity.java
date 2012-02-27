@@ -104,6 +104,7 @@ public class MeetingsListActivity extends ListActivity {
 
 		/* Implement listers for buttons and a Item in the list */
 		exitButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), MeetMeBackgroundActivity.class);
 				startActivity(intent);
@@ -113,6 +114,7 @@ public class MeetingsListActivity extends ListActivity {
 
 		/* Click on a listitem */
 		this.getListView().setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 				
 				Intent intent = new Intent(arg1.getContext(), MeetingInfoActivity.class);
@@ -127,6 +129,7 @@ public class MeetingsListActivity extends ListActivity {
 
 		/* Create a new Meeting by going to the Activity */
 		newMeetingButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), NewMeetingActivity.class);
 				startActivityForResult(intent, CREATE_NEW_MEETING_RESULT);
@@ -150,8 +153,6 @@ public class MeetingsListActivity extends ListActivity {
 					setListAdapter(listAdapter);
 					listAdapter.setItems(meetings);
 					listAdapter.notifyDataSetChanged();
-					
-
 				}
 			}
 		} else if (requestCode == CLICK_ON_MEETING_LIST_ELEMENT_RESULT) {
@@ -187,7 +188,8 @@ public class MeetingsListActivity extends ListActivity {
                 .setTitle("Please enter your name")
                 .setView(textEntryView)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {         
+                    @Override
+					public void onClick(DialogInterface dialog, int whichButton) {         
                     	EditText editText = (EditText) textEntryView.findViewById(R.id.name);
                     	String name = editText.getText().toString();
                     	if (name.length() > 3){

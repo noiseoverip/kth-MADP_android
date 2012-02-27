@@ -26,7 +26,8 @@ public class MeetMeBackgroundActivity extends Activity implements OnClickListene
     buttonStop.setOnClickListener(this);
   }
 
-  public void onClick(View src) {
+  @Override
+public void onClick(View src) {
     switch (src.getId()) {
     case R.id.start:
       //Log.d(TAG, "onClick: starting srvice");

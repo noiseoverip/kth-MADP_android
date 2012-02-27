@@ -2,13 +2,18 @@ package com.madp.meetme;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +21,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +34,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
@@ -47,19 +52,22 @@ import com.madp.utils.Statics;
  */
 public class NewMeetingActivity extends ListActivity {
 	private static final String TAG = "NewMeetingActivity";
-	EditText nameOfMeeting, nameOfPlace;
-	String newMeetingName, newMeetingPlace, newMeetingTime, newMeetingDate, smin;
-	ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
-	TextView infolabel;
+	private EditText nameOfMeeting, nameOfPlace;
+	private String newMeetingName, newMeetingPlace, newMeetingTime, newMeetingDate, smin;
+	private ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
+	private TextView infolabel;
 	private ParticipantsAdapter p_adapter;
-	static final int TIME_DIALOG_ID = 0;
-	static final int DATE_DIALOG_ID = 1;
-	private int hour, min, year, month, day;
+	private static final int TIME_DIALOG_ID = 0;
+	private static final int DATE_DIALOG_ID = 1;
+	private int hour, min, year, month, day, meetingId;
+	private long timeLeftToMeetingInMillisec;
 	private static final int CONTACT_PICKER_RESULT = 12345;
 	private ListView lv;
 	private Meeting meeting;
 	private WebService ws;
+	private AlarmManager am;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newmeeting);
@@ -88,6 +96,7 @@ public class NewMeetingActivity extends ListActivity {
 
 		/* Add participants */
 		addParticipants.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
 				startActivityForResult(intent, CONTACT_PICKER_RESULT);
@@ -96,6 +105,7 @@ public class NewMeetingActivity extends ListActivity {
 
 		/* If all data is inserted create meeting ! */
 		createMeeting.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View view) {
 				/**
 				 * Currently you must send all the fields
@@ -104,7 +114,7 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setAddress(nameOfPlace.getText().toString());
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
-				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
+				meeting.settStarting(year + "-" + (month+1) + "-" + day + " " + hour + ":" + min);
 
 				meeting.setOwner(new User(0, "", "demo@gmail.com"));
 				
@@ -120,19 +130,37 @@ public class NewMeetingActivity extends ListActivity {
 				s.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
 				intent.putExtras(s);
 				setResult(RESULT_OK, intent);
-				ws.postMeeting(meeting);
+				
+				/* Post the meeting*/
+                String meetingId = ws.postMeeting(meeting);
+                char [] meetingIdArray = meetingId.toCharArray();
+                char [] idNumber = new char[meetingIdArray.length - 11];
+                int j=0;
+                for(int i = 11; i<meetingIdArray.length;i++){
+                    idNumber[j] = meetingIdArray[i];
+                    j++;
+                }         
+                String result = "";
+                for(int i = 0; i<idNumber.length; i++){
+               	 result += idNumber[i];
+                }
+                int id = Integer.parseInt(result);
+                timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
+                setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
 				finish();
 			}
 		});
 
 		// Buttonlisteners for the date and time buttons
 		meetingTime.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showDialog(TIME_DIALOG_ID);
 			}
 		});
 
 		meetingDate.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				showDialog(DATE_DIALOG_ID);
 			}
@@ -140,18 +168,16 @@ public class NewMeetingActivity extends ListActivity {
 	}
 
 	private TimePickerDialog.OnTimeSetListener mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			hour = hourOfDay;
-
-			if (minute < 10) {
-				smin = ("0" + Integer.toString(minute));
-			} else {
-				smin = Integer.toString(minute);
-			}
+			min = minute;
+			/* LAYOUTPROBLEM?*/
 		}
 	};
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
+		@Override
 		public void onDateSet(DatePicker view, int thisYear, int monthOfYear, int dayOfMonth) {
 			year = thisYear;
 			month = monthOfYear;
@@ -170,6 +196,28 @@ public class NewMeetingActivity extends ListActivity {
 		}
 		return null;
 	}
+	
+	/* Turn clock 15 min back or smth */
+	private long TimeToMeetingInLong(int newYear, int newMonth, int newDay, int newHour, int newMin){
+
+        Date d1 = new GregorianCalendar(newYear, newMonth, newDay, newHour, newMin).getTime();
+        Date today = new Date();
+        System.out.println(d1.getTime() - today.getTime());
+        System.out.println(d1.getTime() + " " + today.getTime());
+        return (d1.getTime() - today.getTime());
+    }
+
+    public void setOneTimeAlarm(long timeLeftToMeetingInMillisec, int id) {
+        am = (AlarmManager) getSystemService(Context.ALARM_SERVICE); 
+        Intent meetingIntent = new Intent(this, MeetingAlarmManager.class);
+        meetingIntent.putExtra("meetingid", id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                meetingIntent, PendingIntent.FLAG_ONE_SHOT);
+
+        Calendar cal = Calendar.getInstance();
+        am.set(AlarmManager.RTC_WAKEUP,
+                (System.currentTimeMillis() + timeLeftToMeetingInMillisec), pendingIntent);
+    }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -181,7 +229,7 @@ public class NewMeetingActivity extends ListActivity {
 				Cursor userCursor = managedQuery(contactData, null, null, null, null);
 				if (userCursor.moveToFirst()) {
 					// Get contact id
-					String contactId = userCursor.getString(userCursor.getColumnIndex(ContactsContract.Contacts._ID));
+					String contactId = userCursor.getString(userCursor.getColumnIndex(BaseColumns._ID));
 					// Get user name
 					user.setName(userCursor.getString(userCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
 					// Get contact emails
@@ -210,6 +258,7 @@ public class NewMeetingActivity extends ListActivity {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 					builder.setTitle("Choose email to use");
 					builder.setItems(items, new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int item) {
 							user.setEmail((String) items[item]);
 							p_adapter.notifyDataSetChanged();
