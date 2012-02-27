@@ -45,7 +45,7 @@ public class GPSFindLocationFromStringOnMap extends GPSActivity{
  		Mymap.invalidate();
 		
  		Log.i("cheking bundle throughput ", "Meeting name = "+s.getTitle());
- 		Log.i("cheking bundle throughput ", "Meeting owner"+ s.getOwner().getName());
+ 		Log.i("cheking bundle throughput ", "Meeting owner = "+ s.getOwner().getName());
  		Log.i("cheking bundle throughput ", "address= "+s.getAddress());
  		Log.i("cheking bundle throughput ", "location lat = " + s.getCoordinates().getILatitude());
  		Log.i("cheking bundle throughput ", " loc lon = "+s.getCoordinates().getILongitude());
