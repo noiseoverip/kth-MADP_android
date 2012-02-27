@@ -44,8 +44,11 @@ public class GPSFindLocationFromStringOnMap extends GPSActivity{
         }
  		Mymap.invalidate();
 		
- 		Log.i("cheking bundle throughput ",  "Meeting name = "+s.getTitle()+" owner =" + s.getOwner()+
- 			  " address= "+s.getAddress() + " location lat = " + s.getCoordinates().getILatitude()+ " loc lon = "+s.getCoordinates().getILongitude());
+ 		Log.i("cheking bundle throughput ", "Meeting name = "+s.getTitle());
+ 		Log.i("cheking bundle throughput ", "Meeting owner"+ s.getOwner().getName());
+ 		Log.i("cheking bundle throughput ", "address= "+s.getAddress());
+ 		Log.i("cheking bundle throughput ", "location lat = " + s.getCoordinates().getILatitude());
+ 		Log.i("cheking bundle throughput ", " loc lon = "+s.getCoordinates().getILongitude());
  		
 		DrawAtMap(s.getCoordinates(), s.getAddress(), s.getOwner().getName(),R.drawable.bluedot);
 		mapcon.animateTo(new GeoPoint(s.getCoordinates().getILatitude(), s.getCoordinates().getILongitude()));

@@ -83,6 +83,25 @@ public class Meeting implements Serializable{
 		return coordinates;
 	}
 
+	
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.coordinates = new LatLonPoint(latitude, this.longitude);
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.coordinates = new LatLonPoint(this.latitude, longitude);
+		this.longitude = longitude;
+	}
+
 	public void setCoordinates(LatLonPoint coordinates) {
 		this.coordinates = coordinates;
 	}
@@ -154,7 +173,7 @@ public class Meeting implements Serializable{
 	}
 	public static JSONObject getLocationInfo(String address) {
 		
-		Log.d("address info", "address = "+address);
+		Log.i("address info", "address = "+address);
 		
 	    StringBuilder stringBuilder = new StringBuilder();
 	    try {
