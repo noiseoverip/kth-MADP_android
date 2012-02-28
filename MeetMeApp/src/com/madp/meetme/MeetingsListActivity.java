@@ -37,7 +37,7 @@ import com.madp.utils.Statics;
  * Display meetings where user is participant or creator. *
  * 
  * @author Niklas and Peter initial version without server integration
- * @author Saulius 2012-02-19 integrated WebService and removed some obsolete stuff
+ * @author Saulius 2012-02-19 integrated WebService and removed some obsolete stuff, added to fetch only user's meetings
  * 
  */
 public class MeetingsListActivity extends ListActivity {	
@@ -52,8 +52,7 @@ public class MeetingsListActivity extends ListActivity {
 
 	private WebService ws;
 	
-	private Context mContext;
-	private AlertDialog userNameDialog = null;
+	private Context mContext;	
 	private SharedPreferences prefs;
 
 	@Override
@@ -81,9 +80,9 @@ public class MeetingsListActivity extends ListActivity {
 			// get default account email
 			final SharedPreferences.Editor prefsEditor = prefs.edit();	
 			Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-			if (accounts.length > 1) {		
+			if (accounts.length > 0) {		
 				Account account = accounts[0];
-				Log.d(TAG, "Found account type:"+account.type+" name:"+account.name+"saving...");		
+				Log.d(TAG, "Found account type:"+account.type+" name:"+account.name+" saving...");		
 				prefsEditor.putString(Statics.USEREMAIL, account.name);
 				prefsEditor.commit();
 			} else {
@@ -166,7 +165,7 @@ public class MeetingsListActivity extends ListActivity {
 	 */
 	private void refreshList() {
 		Log.d(TAG, "refreshList");
-		List<Meeting> meetingsTmp = ws.getUserMeetings(prefs.getString(Statics.USERNAME, ""), 0, 100);
+		List<Meeting> meetingsTmp = ws.getUserMeetings(prefs.getString(Statics.USEREMAIL, ""), 0, 100);
 		if (meetingsTmp != null) {
 			meetings = meetingsTmp;
 			if (listAdapter != null) {
