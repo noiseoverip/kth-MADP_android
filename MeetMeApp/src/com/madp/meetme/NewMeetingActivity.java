@@ -112,15 +112,16 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setAddress(nameOfPlace.getText().toString());
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
-				meeting.settStarting(year + "-" + (month+1) + "-" + day + " " + hour + ":" + min);
-
-				meeting.setOwner(new User(0, "", "demo@gmail.com"));
+				meeting.settStarting(year + "-" + (month+1) + "-" + day + " " + hour + ":" + min);				
 				
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 				User owner = new User(0, prefs.getString(Statics.USERNAME, null), prefs.getString(Statics.USEREMAIL,
 						null));
-				meeting.setOwner(owner);				
+				meeting.setOwner(owner);
+				
+				// Add owner to participants list
+				meeting.getParticipants().add(owner);
 
 
 				Intent intent = new Intent(view.getContext(), MeetingsListActivity.class);
