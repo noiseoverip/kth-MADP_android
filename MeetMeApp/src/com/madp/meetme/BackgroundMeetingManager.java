@@ -1,11 +1,10 @@
 package com.madp.meetme;
 
-import com.madp.maps.GPSActivity;
-import com.madp.maps.GPSFindLocationFromStringOnMap;
-import com.madp.maps.GPSLocationFinderActivity;
 import com.madp.meetme.webapi.WebService;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
+import com.madp.utils.GPSActivity;
+import com.madp.utils.GPSLocationFinderActivity;
 import com.madp.utils.Logger;
 import com.madp.utils.SerializerHelper;
 
@@ -67,10 +66,10 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		CharSequence contentTitle = "MeetMe is running";
 		long when = System.currentTimeMillis();
 		
-		Intent mapIntent = new Intent(this, GPSFindLocationFromStringOnMap.class);
+		Intent mapIntent = new Intent(this, GPSFindLocationOnMap.class);
 		
 		//String title, String tCreated, String tStarting, int duration, int monitoring, String address, double longitude, double latitude, User owner
-		meeting = new Meeting("Meetingtest", "a", "a", 15, 15, "KŠrrvŠgen 47A, Stockholm, Sweden", 100.0, 150.0, user);
+		meeting = new Meeting("Meetingtest", "a", "a", 15, 15, "Kï¿½rrvï¿½gen 47A, Stockholm, Sweden", 100.0, 150.0, user);
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,7 +83,6 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);		
 	}
 
-	@Override
 	public void onLocationChanged(Location location) {
 	
 		/* Update and send the new position to the server */
@@ -96,7 +94,6 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		user.setLatitude( latitude);
 		user.setLongitude(longitude);
 		new Thread(new Runnable(){
-			@Override
 			public void run() {
 				ws.updateUser(user);
 			}
@@ -105,17 +102,16 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		/* Broadcast update to mapview activity */
 	}
 
-	@Override
+	
 	public void onProviderDisabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Disabled", Toast.LENGTH_LONG);
 	}
 
-	@Override
+	
 	public void onProviderEnabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Enabled", Toast.LENGTH_LONG);
 
 	}
 
-	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

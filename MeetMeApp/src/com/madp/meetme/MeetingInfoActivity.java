@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.madp.maps.GPSFindLocationFromStringOnMap;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
@@ -62,6 +61,7 @@ public class MeetingInfoActivity extends ListActivity {
 					
 			this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
 			getListView().setAdapter(p_adapter);
+			Log.i("MeetingInfoActivity, on Create", "lat = "+meeting.getLatitude()+"lot = "+meeting.getLongitude());
 			
 			/* Set meeting info */
 			infolabel.setText(meeting.getTitle());
@@ -69,12 +69,13 @@ public class MeetingInfoActivity extends ListActivity {
 			datelabel.setText(meeting.gettStarting()); // TODO: deal with this, date and time is one thing...
 			locationlabel.setText(meeting.getAddress());
 			sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
+			
 		}
 		mapbutton.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent myintent = new Intent(v.getContext(),com.madp.maps.GPSFindLocationFromStringOnMap.class);
+				Intent myintent = new Intent(v.getContext(),com.madp.meetme.GPSFindLocationOnMap.class);
 				
 				Bundle b = new Bundle();
 				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));

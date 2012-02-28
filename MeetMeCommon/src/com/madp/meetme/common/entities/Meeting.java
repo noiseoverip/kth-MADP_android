@@ -42,7 +42,6 @@ public class Meeting implements Serializable{
 	private String address;
 	private double latitude;
 	private double longitude;
-	private LatLonPoint coordinates;	
 	private List<User> participants;
 	private User owner;	// meeting creator
 	
@@ -62,7 +61,7 @@ public class Meeting implements Serializable{
 		this.address = address;
 		this.latitude =latitude;
 		this.longitude =longitude;
-		coordinates = getLatLong(getLocationInfo(address));
+		
 		this.owner = owner;
 		this.participants = new ArrayList<User>();
 	}
@@ -78,18 +77,12 @@ public class Meeting implements Serializable{
 	public int getId() {
 		return id;
 	}
-
-	public LatLonPoint getCoordinates() {
-		return coordinates;
-	}
-
 	
 	public double getLatitude() {
 		return latitude;
 	}
 
 	public void setLatitude(double latitude) {
-		this.coordinates = new LatLonPoint(latitude, this.longitude);
 		this.latitude = latitude;
 	}
 
@@ -98,12 +91,7 @@ public class Meeting implements Serializable{
 	}
 
 	public void setLongitude(double longitude) {
-		this.coordinates = new LatLonPoint(this.latitude, longitude);
 		this.longitude = longitude;
-	}
-
-	public void setCoordinates(LatLonPoint coordinates) {
-		this.coordinates = coordinates;
 	}
 
 	public int getMonitoring() {
@@ -132,7 +120,6 @@ public class Meeting implements Serializable{
 
 	public void setAddress(String address) {
 		this.address = address;
-		this.coordinates = getLatLong(getLocationInfo(address));
 	}
 
 	public void setDuration(int duration) {
@@ -171,66 +158,7 @@ public class Meeting implements Serializable{
 	public String toString(){
 		return "Meeting id:"+this.id+" starting:"+this.tStarting+" participants:"+((participants != null) ? this.participants.size() : 0);
 	}
-	public static JSONObject getLocationInfo(String address) {
 		
-		Log.i("address info", "address = "+address);
-		
-	    StringBuilder stringBuilder = new StringBuilder();
-	    try {
-
-	    address = address.replaceAll(" ","%20");    
-
-	    HttpPost httppost = new HttpPost("http://maps.google.com/maps/api/geocode/json?address=" + address + "&sensor=false");
-	    HttpClient client = new DefaultHttpClient();
-	    HttpResponse response;
-	    stringBuilder = new StringBuilder();
-
-
-	        response = client.execute(httppost);
-	        HttpEntity entity = response.getEntity();
-	        InputStream stream = entity.getContent();
-	        int b;
-	        while ((b = stream.read()) != -1) {
-	            stringBuilder.append((char) b);
-	        }
-	    } catch (ClientProtocolException e) {
-	    } catch (IOException e) {
-	    }
-
-	    JSONObject jsonObject = new JSONObject();
-	    try {
-	        jsonObject = new JSONObject(stringBuilder.toString());
-	    } catch (JSONException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-	    }
-
-	    return jsonObject;
-	}
-	public static LatLonPoint  getLatLong(JSONObject jsonObject) {
-
-        Double lon = new Double(0);
-        Double lat = new Double(0);
-
-        try {
-
-            lon = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getJSONObject("geometry").getJSONObject("location")
-                .getDouble("lng");
-
-            lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getJSONObject("geometry").getJSONObject("location")
-                .getDouble("lat");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-        Log.i("coordinates::","Lat = "+lat+" Lon = "+lon);
-        return new LatLonPoint(lat,lon);
-    }
-	
 	/**
 	 * Always treat de-serialization as a full-blown constructor, by validating
 	 * the final state of the de-serialized object.
