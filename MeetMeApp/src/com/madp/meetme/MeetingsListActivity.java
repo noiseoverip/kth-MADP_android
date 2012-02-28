@@ -143,21 +143,20 @@ public class MeetingsListActivity extends ListActivity {
 		Log.d(TAG, "Result code received:"+resultCode);
 		// TODO: should be two situations: new meeting was created or not, update only if created
 		refreshList();
+		/* refresh() is called everytime and you are adding another meeting ??? WTF !
 		if (requestCode == CREATE_NEW_MEETING_RESULT) {
 			if (resultCode == RESULT_OK) { 
 				Bundle b = data.getExtras();
 				if(b != null){
 					Meeting s = (Meeting) SerializerHelper.deserializeObject(b.getByteArray("meeting"));
-					meetings.add(s);
-					listAdapter = new MeetingsListAdapter(this, R.layout.meetingrow, meetings);
-					setListAdapter(listAdapter);
-					listAdapter.setItems(meetings);
+					meetings.add(s);					
 					listAdapter.notifyDataSetChanged();
 				}
 			}
 		} else if (requestCode == CLICK_ON_MEETING_LIST_ELEMENT_RESULT) {
 			// Meeting deletion and update should be performed in MeetingInfo
 		}
+		*/
 	}
 
 	/**
