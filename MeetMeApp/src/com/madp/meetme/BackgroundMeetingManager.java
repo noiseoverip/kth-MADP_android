@@ -3,6 +3,7 @@ package com.madp.meetme;
 import com.madp.maps.GPSActivity;
 import com.madp.maps.GPSFindLocationFromStringOnMap;
 import com.madp.maps.GPSLocationFinderActivity;
+import com.madp.maps.GPSMovingObjectsActivity;
 import com.madp.meetme.webapi.WebService;
 import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
@@ -82,7 +83,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		meeting.setLongitude(18.06508);
 		/* ***************************/
 		
-		Intent mapIntent = new Intent(this, GPSFindLocationFromStringOnMap.class);
+		Intent mapIntent = new Intent(this, GPSMovingObjectsActivity.class);
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -139,6 +139,7 @@ public class NewMeetingActivity extends ListActivity {
                 	Log.e(TAG, "Could not parse meeting id from:"+response);
                 	Toast.makeText(view.getContext(), "Server error: Could not parse meeting id from:"+response, Toast.LENGTH_LONG);
                 }
+                Log.d(TAG, "Parsed meeting id:"+id);
                 timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
                 setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
 				finish();

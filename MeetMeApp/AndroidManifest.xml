@@ -48,8 +48,11 @@
 		
 
 		<activity android:name="com.madp.maps.GPSFindLocationFromStringOnMap"
-			android:screenOrientation="portrait">
-			
+			android:screenOrientation="portrait">			
+		</activity>
+		
+		<activity android:name="com.madp.maps.GPSMovingObjectsActivity"
+			android:screenOrientation="portrait">			
 		</activity>	
 
         <activity android:name="InvitationActivity" android:label="@string/app_name">
