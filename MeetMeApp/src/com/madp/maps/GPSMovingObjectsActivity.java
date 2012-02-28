@@ -14,7 +14,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-
+/**
+ * 
+ * @author esauali 2012-02-28 Removed usage of Meeting.getCoordinates()
+ *
+ */
 public class GPSMovingObjectsActivity extends GPSActivity {
 
 	
@@ -51,8 +55,8 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 	                MovePersons();
 	                try {
 						Thread.sleep(1000);
-						for(int j=0;j<user_group.length;j++){
-								 DrawAtMap(user_group[j].getCoordinates(),user_group[j].getName(),"Android pos",R.drawable.androidmarker );
+						for(int j=0;j<user_group.length;j++){								
+								 DrawAtMap(user_group[j].getLatitude(),user_group[j].getLongitude(),user_group[j].getName(),"Android pos",R.drawable.androidmarker );
 						//		 Mymap.postInvalidate();						 
 							}
 						} catch (InterruptedException e) {
@@ -97,8 +101,10 @@ public class GPSMovingObjectsActivity extends GPSActivity {
         	System.out.println("GPS unavailable");
             Toast.makeText(this,"GPS is disabled.", Toast.LENGTH_LONG).show();             
         }
-        DrawAtMap(t.getCoordinates(),t.getTitle(),"Meeting location",R.drawable.bluedot );       
-        mapcon.animateTo(new GeoPoint(t.getCoordinates().getILatitude(), t.getCoordinates().getILongitude()));
+        
+        LatLonPoint coordinates = new LatLonPoint(t.getLatitude(), t.getLongitude());
+        DrawAtMap(coordinates,t.getTitle(),"Meeting location",R.drawable.bluedot );       
+        mapcon.animateTo(new GeoPoint(coordinates.getILatitude(), coordinates.getILongitude()));
         mapcon.setZoom(10);
         
     }

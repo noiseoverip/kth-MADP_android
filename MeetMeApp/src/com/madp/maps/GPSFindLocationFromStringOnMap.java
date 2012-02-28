@@ -2,6 +2,7 @@ package com.madp.maps;
 
 import com.google.android.maps.GeoPoint;
 import com.madp.meetme.R;
+import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.utils.SerializerHelper;
 import android.os.Bundle;
@@ -9,7 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-
+/**
+ * 
+ * @author esauali 2012-02-28 Removed usage of User.getCoordinates()
+ *
+ */
 public class GPSFindLocationFromStringOnMap extends GPSActivity{
 
 	
@@ -44,11 +49,12 @@ public class GPSFindLocationFromStringOnMap extends GPSActivity{
         }
  		Mymap.invalidate();
 		
+ 		LatLonPoint coordinates = new LatLonPoint(s.getLatitude(), s.getLongitude());
  		Log.i("cheking bundle throughput ",  "Meeting name = "+s.getTitle()+" owner =" + s.getOwner()+
- 			  " address= "+s.getAddress() + " location lat = " + s.getCoordinates().getILatitude()+ " loc lon = "+s.getCoordinates().getILongitude());
+ 			  " address= "+s.getAddress() + " location lat = " + coordinates.getILatitude()+ " loc lon = "+coordinates.getILongitude());
  		
-		DrawAtMap(s.getCoordinates(), s.getAddress(), s.getOwner().getName(),R.drawable.bluedot);
-		mapcon.animateTo(new GeoPoint(s.getCoordinates().getILatitude(), s.getCoordinates().getILongitude()));
+		DrawAtMap(coordinates, s.getAddress(), s.getOwner().getName(),R.drawable.bluedot);
+		mapcon.animateTo(new GeoPoint(coordinates.getILatitude(), coordinates.getILongitude()));
         mapcon.setZoom(10);	
 		
         cancel.setOnClickListener( new View.OnClickListener() {
