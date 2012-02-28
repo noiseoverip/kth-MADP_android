@@ -13,6 +13,13 @@ import org.apache.log4j.Logger;
 
 import com.madp.entities.Meeting;
 
+/**
+ * Meeting oject operations
+ * 
+ * @author esauali 2012-02-20 Initial version
+ * @author esauali 2012-02-28 Add attach participants to meeting object, javadoc
+ *
+ */
 @Path("/meeting")
 public class MeetingService {
 
@@ -27,7 +34,7 @@ public class MeetingService {
 		try {
 			meeting.persist();
 		} catch (Exception e) {
-			logger.error("Could not persist meeting", e);
+			logger.error("Could not persist meeting:"+meeting.toString(), e);
 			return Response.status(Response.Status.BAD_REQUEST).entity(meeting.toString()).build();
 		}
 

@@ -11,6 +11,13 @@ import org.apache.log4j.Logger;
 
 import com.madp.entities.User;
 
+/**
+ * Webservice for user operations
+ * 
+ * @author esauali 2012-02-20 initial version
+ * @author esauali 2012-02-28 add javadoc
+ * 
+ */
 @Path("/user")
 public class UserService {
 	private static Logger logger = Logger.getLogger(UserService.class);
