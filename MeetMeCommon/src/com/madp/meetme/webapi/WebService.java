@@ -19,9 +19,16 @@ import com.google.gson.reflect.TypeToken;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 
+/**
+ * API for communication with MeetMe server
+ * 
+ * @author esauali 2012-02-16 initial implementation
+ * @author esauali 2012-02-28 fixed server URL, javadocs
+ *
+ */
 public class WebService {
 	private static final String TAG = "WebService";
-	private static final String URL_BASE = "http://92.61.38.186:8080/MeetMeServer/rest/";	
+	private static final String URL_BASE = "http:///MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";
 	private static final String URL_GET_MEETING_USER =  URL_BASE + "meeting/all/%d/%d/%s";
