@@ -29,7 +29,6 @@ import android.view.View.OnClickListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -48,21 +47,20 @@ import com.madp.utils.Statics;
  * 
  * @author Niklas and Peter initial version
  * @author Saulius 2012-02-19 integrated WebService, added TODO elements, remove obsolete stuff
+ * @author Saulius 2012-02-28 fixed parsing of server response to get meeting id
  * 
  */
 public class NewMeetingActivity extends ListActivity {
 	private static final String TAG = "NewMeetingActivity";
-	private EditText nameOfMeeting, nameOfPlace;
-	private String newMeetingName, newMeetingPlace, newMeetingTime, newMeetingDate, smin;
+	private EditText nameOfMeeting, nameOfPlace;	
 	private ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
 	private TextView infolabel;
 	private ParticipantsAdapter p_adapter;
 	private static final int TIME_DIALOG_ID = 0;
 	private static final int DATE_DIALOG_ID = 1;
-	private int hour, min, year, month, day, meetingId;
+	private int hour, min, year, month, day;
 	private long timeLeftToMeetingInMillisec;
-	private static final int CONTACT_PICKER_RESULT = 12345;
-	private ListView lv;
+	private static final int CONTACT_PICKER_RESULT = 12345;	
 	private Meeting meeting;
 	private WebService ws;
 	private AlarmManager am;
@@ -132,19 +130,14 @@ public class NewMeetingActivity extends ListActivity {
 				setResult(RESULT_OK, intent);
 				
 				/* Post the meeting*/
-                String meetingId = ws.postMeeting(meeting);
-                char [] meetingIdArray = meetingId.toCharArray();
-                char [] idNumber = new char[meetingIdArray.length - 11];
-                int j=0;
-                for(int i = 11; i<meetingIdArray.length;i++){
-                    idNumber[j] = meetingIdArray[i];
-                    j++;
-                }         
-                String result = "";
-                for(int i = 0; i<idNumber.length; i++){
-               	 result += idNumber[i];
+                String response = ws.postMeeting(meeting);
+                int id = -1;
+                try {
+                	id = Integer.parseInt(response.split(" ")[1].split(":")[1]);
+                } catch (Exception e){
+                	Log.e(TAG, "Could not parse meeting id from:"+response);
+                	Toast.makeText(view.getContext(), "Server error: Could not parse meeting id from:"+response, Toast.LENGTH_LONG);
                 }
-                int id = Integer.parseInt(result);
                 timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
                 setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
 				finish();
