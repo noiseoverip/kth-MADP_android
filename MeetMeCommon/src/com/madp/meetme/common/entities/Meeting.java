@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-
+import java.util.TimeZone;
 
 /**
  * Meeting object class. Contains all meeting related information.
@@ -16,7 +18,7 @@ import java.util.List;
  * @author esauali 2012-02-28 removed coordinates stuff
  * 
  */
-public class Meeting implements Serializable{
+public class Meeting implements Serializable {
 	/**
 	 * 
 	 */
@@ -29,9 +31,9 @@ public class Meeting implements Serializable{
 	private int monitoring; // minuted before starting to start monitoring
 	private String address;
 	private double latitude;
-	private double longitude;		
+	private double longitude;
 	private List<User> participants;
-	private User owner;	// meeting creator	
+	private User owner; // meeting creator
 
 	/**
 	 * Default constructor
@@ -40,22 +42,23 @@ public class Meeting implements Serializable{
 		participants = new ArrayList<User>();
 	}
 
-	public Meeting (String title, String tCreated, String tStarting, int duration, int monitoring, String address, double longitude, double latitude, User owner){
+	public Meeting(String title, String tCreated, String tStarting, int duration, int monitoring, String address,
+			double longitude, double latitude, User owner) {
 		this.title = title;
-		this.tCreated = tCreated;		
+		this.tCreated = tCreated;
 		this.tStarting = tStarting;
 		this.duration = duration;
 		this.monitoring = monitoring;
 		this.address = address;
-		this.latitude =latitude;
-		this.longitude =longitude;		
+		this.latitude = latitude;
+		this.longitude = longitude;
 		this.owner = owner;
 		this.participants = new ArrayList<User>();
 	}
 
 	public String getAddress() {
 		return address;
-	}	
+	}
 
 	public int getDuration() {
 		return duration;
@@ -97,78 +100,56 @@ public class Meeting implements Serializable{
 		return tStarting;
 	}
 
-	/* WHIS SHOULD NOT BE HERE
-	public static JSONObject getLocationInfo(String address) {
-		
-		Log.d("address info", "address = "+address);
-		
-	    StringBuilder stringBuilder = new StringBuilder();
-	    try {
-
-	    address = address.replaceAll(" ","%20");    
-
-	    HttpPost httppost = new HttpPost("http://maps.google.com/maps/api/geocode/json?address=" + address + "&sensor=false");
-	    HttpClient client = new DefaultHttpClient();
-	    HttpResponse response;
-	    stringBuilder = new StringBuilder();
-
-
-	        response = client.execute(httppost);
-	        HttpEntity entity = response.getEntity();
-	        InputStream stream = entity.getContent();
-	        int b;
-	        while ((b = stream.read()) != -1) {
-	            stringBuilder.append((char) b);
-	        }
-	    } catch (ClientProtocolException e) {
-	    } catch (IOException e) {
-	    }
-
-	    JSONObject jsonObject = new JSONObject();
-	    try {
-	        jsonObject = new JSONObject(stringBuilder.toString());
-	    } catch (JSONException e) {	        
-	        e.printStackTrace();
-	    }
-
-	    return jsonObject;
-	}
-	public static LatLonPoint  getLatLong(JSONObject jsonObject) {
-
-        Double lon = new Double(0);
-        Double lat = new Double(0);
-
-        try {
-
-            lon = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getJSONObject("geometry").getJSONObject("location")
-                .getDouble("lng");
-
-            lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
-                .getJSONObject("geometry").getJSONObject("location")
-                .getDouble("lat");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-        Log.i("coordinates::","Lat = "+lat+" Lon = "+lon);
-        return new LatLonPoint(lat,lon);
-    }
-	*/
-	/**
-	 * Always treat de-serialization as a full-blown constructor, by validating
-	 * the final state of the de-serialized object.
+	/*
+	 * WHIS SHOULD NOT BE HERE public static JSONObject getLocationInfo(String address) {
+	 * 
+	 * Log.d("address info", "address = "+address);
+	 * 
+	 * StringBuilder stringBuilder = new StringBuilder(); try {
+	 * 
+	 * address = address.replaceAll(" ","%20");
+	 * 
+	 * HttpPost httppost = new HttpPost("http://maps.google.com/maps/api/geocode/json?address=" + address +
+	 * "&sensor=false"); HttpClient client = new DefaultHttpClient(); HttpResponse response; stringBuilder = new
+	 * StringBuilder();
+	 * 
+	 * 
+	 * response = client.execute(httppost); HttpEntity entity = response.getEntity(); InputStream stream =
+	 * entity.getContent(); int b; while ((b = stream.read()) != -1) { stringBuilder.append((char) b); } } catch
+	 * (ClientProtocolException e) { } catch (IOException e) { }
+	 * 
+	 * JSONObject jsonObject = new JSONObject(); try { jsonObject = new JSONObject(stringBuilder.toString()); } catch
+	 * (JSONException e) { e.printStackTrace(); }
+	 * 
+	 * return jsonObject; } public static LatLonPoint getLatLong(JSONObject jsonObject) {
+	 * 
+	 * Double lon = new Double(0); Double lat = new Double(0);
+	 * 
+	 * try {
+	 * 
+	 * lon = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+	 * .getJSONObject("geometry").getJSONObject("location") .getDouble("lng");
+	 * 
+	 * lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+	 * .getJSONObject("geometry").getJSONObject("location") .getDouble("lat");
+	 * 
+	 * } catch (Exception e) { e.printStackTrace();
+	 * 
+	 * }
+	 * 
+	 * Log.i("coordinates::","Lat = "+lat+" Lon = "+lon); return new LatLonPoint(lat,lon); }
 	 */
-	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException,
-			IOException {
+	/**
+	 * Always treat de-serialization as a full-blown constructor, by validating the final state of the de-serialized
+	 * object.
+	 */
+	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 		aInputStream.defaultReadObject();
 	}
 
 	public void setAddress(String address) {
-		this.address = address;		
-	}	
+		this.address = address;
+	}
 
 	public void setDuration(int duration) {
 		this.duration = duration;
@@ -184,16 +165,16 @@ public class Meeting implements Serializable{
 
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
-	}	
+	}
 
 	public void setMonitoring(int monitoring) {
 		this.monitoring = monitoring;
 	}
-	
+
 	public void setOwner(User owner) {
 		this.owner = owner;
 	}
-	
+
 	public void setParticipants(List<User> participants) {
 		this.participants = participants;
 	}
@@ -201,7 +182,7 @@ public class Meeting implements Serializable{
 	public void settCreated(String tCreated) {
 		this.tCreated = tCreated;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -211,17 +192,37 @@ public class Meeting implements Serializable{
 	}
 
 	@Override
-	public String toString(){
-		return "Meeting id:"+this.id+" starting:"+this.tStarting+" participants:"+((participants != null) ? this.participants.size() : 0);
+	public String toString() {
+		return "Meeting id:" + this.id + " starting:" + this.tStarting + " participants:"
+				+ ((participants != null) ? this.participants.size() : 0);
 	}
 
 	/**
-	 * This is the default implementation of writeObject. Customise if
-	 * necessary.
+	 * This is the default implementation of writeObject. Customize if necessary.
 	 */
 	private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
 		// perform the default serialization for all non-transient, non-static
 		// fields
 		aOutputStream.defaultWriteObject();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+
+		if (this == object)
+			return true;
+
+		if (object instanceof Meeting) {
+			Meeting that = (Meeting) object;			
+					
+			if (this.id == that.getId() && this.title.equals(that.getTitle())
+					&& this.duration == that.duration
+					&& this.monitoring == that.monitoring && this.address == that.address
+					&& this.latitude == that.latitude && this.longitude == that.longitude
+					&& this.participants == that.participants && this.owner == that.owner)
+				return true;
+		}
+
+		return false;
 	}
 }

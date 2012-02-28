@@ -1,8 +1,8 @@
 package com.madp.entities;
 
-import static com.madp.utils.ServiceUtils.*;
+import static com.madp.utils.ServiceUtils.FAILED_CLOSE_MYSQL;
+import static com.madp.utils.ServiceUtils.FAILED_CONNECT_MYSQL;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,16 +34,48 @@ public class Meeting {
 	private com.mysql.jdbc.Connection con;
 
 	private static final String SQL_INSERT_MEETING = "INSERT INTO `meetings`(`title`, `starting`, `duration`, `monitoring`, `address`, `longitude`, `latitude`,`owner_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String SQL_GET_MEETINGS = "SELECT * FROM `meetings` ORDER BY `created` DESC LIMIT ?,?";
-	private static final String SQL_GET_MEETINGS_USER = "SELECT * FROM `meetings` WHERE `meeting_id` IN (SELECT DISTINCT `meeting_id` FROM `participants` WHERE `user_id` = ?) ORDER BY `created` DESC LIMIT ?,?";
-	private static final String SQL_GET_MEETING = "SELECT * FROM `meetings` WHERE `meeting_id`=?";
-	private static final String SQL_GET_MEETING_PARTICIPANTS = "SELECT u.`user_id`, u.`email` FROM `participants` p NATURAL JOIN `users` u WHERE p.`meeting_id`=?";
+	private static final String SQL_GET_MEETINGS = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id ORDER BY `created` DESC LIMIT ?,?";
+	private static final String SQL_GET_MEETINGS_USER = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id WHERE `meeting_id` IN (SELECT DISTINCT `meeting_id` FROM `participants` WHERE `user_id` = ?) ORDER BY `created` DESC LIMIT ?,?";
+	private static final String SQL_GET_MEETING = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id WHERE `meeting_id`=?";
+	private static final String SQL_GET_MEETING_PARTICIPANTS = "SELECT u.`user_id`, u.`email`, `u`.`longitude`,`u`.`latitude` FROM `participants` p NATURAL JOIN `users` u WHERE p.`meeting_id`=?";
 	private static final String SQL_ADD_PARTICIPANT = "INSERT INTO `participants` (meeting_id, user_id) VALUES (?,?)";
 
 	public Meeting() {
 
 	}
+	
+	private void getMeetingParticipants(int id, List<User> participants) throws SQLException{		
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+			// get meeting participants
+			stm = con.prepareStatement(SQL_GET_MEETING_PARTICIPANTS);
+			stm.setInt(1, id);
+			logger.debug(stm.toString());
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				User participant = new User(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4));
+				participants.add(participant);
+			}
 
+		} finally {
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+			if (null != stm) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+		}
+			
+	}
 	/**
 	 * Constructor used for creating Meeting object from database
 	 * 
@@ -58,7 +90,7 @@ public class Meeting {
 	 * @param latitude
 	 */
 	public Meeting(int id, String title, String tCreated, String tStarting, String duration, String monitoring,
-			String address, Double longitude, Double latitude, int ownerId) {
+			String address, Double longitude, Double latitude, User owner) {
 		this.id = id;
 		this.title = title;
 		this.tCreated = tCreated;
@@ -68,7 +100,7 @@ public class Meeting {
 		this.address = address;
 		this.longitude = longitude;
 		this.latitude = latitude;
-		this.owner = new User(ownerId, null); // TODO: to add JOIN and fetch owner name
+		this.owner = owner;
 		this.participants = new ArrayList<User>();
 	}
 
@@ -135,7 +167,7 @@ public class Meeting {
 
 	// TODO: should be in MeetingDao
 	public Meeting getMeeting(int id) throws Exception {
-		Connection con = SqlUtils.getConnection();
+		con = SqlUtils.getConnection();
 		if (con == null) {
 			throw new Exception(FAILED_CONNECT_MYSQL);
 		}
@@ -151,20 +183,14 @@ public class Meeting {
 			rs = stm.executeQuery();
 			if (rs.next()) {
 				m = new Meeting(rs.getInt(1), rs.getString(3), rs.getString(2), rs.getString(4), rs.getString(5),
-						rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9), rs.getInt(10));
+						rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9), new User(rs.getInt(10),
+								rs.getString(11), rs.getDouble(12), rs.getDouble(13)));
 			} else {
 				throw new Exception("Could not find meeting with id:" + id);
 			}
 
 			// get meeting participants
-			stm = con.prepareStatement(SQL_GET_MEETING_PARTICIPANTS);
-			stm.setInt(1, id);
-			logger.debug(stm.toString());
-			rs = stm.executeQuery();
-			while (rs.next()) {
-				User participant = new User(rs.getInt(1), rs.getString(2));
-				m.getParticipants().add(participant);
-			}
+			getMeetingParticipants(id, m.getParticipants());
 
 		} finally {
 			if (null != rs) {
@@ -206,7 +232,7 @@ public class Meeting {
 	public Meeting[] getMeetings(String userEmail, int limit_from, int limit_to) throws Exception {
 		List<Meeting> array = new ArrayList<Meeting>();
 
-		Connection con = SqlUtils.getConnection();
+		con = SqlUtils.getConnection();
 		if (con == null) {
 			throw new Exception(FAILED_CONNECT_MYSQL);
 		}
@@ -234,10 +260,15 @@ public class Meeting {
 			rs = stm.executeQuery();
 			while (rs.next()) {
 				Meeting m = new Meeting(rs.getInt(1), rs.getString(3), rs.getString(2), rs.getString(4),
-						rs.getString(5), rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9),
-						rs.getInt(10));
+						rs.getString(5), rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9), new User(
+								rs.getInt(10), rs.getString(11), rs.getDouble(12), rs.getDouble(13)));
 				array.add(m);
+				
+				// get meeting participants
+				getMeetingParticipants(m.getId(), m.getParticipants());
 			}
+			
+			logger.debug("Found "+array.size()+" meetings");
 
 		} finally {
 			if (null != rs) {
@@ -309,9 +340,9 @@ public class Meeting {
 			owner = User.getUserByEmail(owner.getEmail(), true);
 
 			// create meeting object
-			stm = con.prepareStatement(SQL_INSERT_MEETING, Statement.RETURN_GENERATED_KEYS);			
+			stm = con.prepareStatement(SQL_INSERT_MEETING, Statement.RETURN_GENERATED_KEYS);
 			stm.setString(1, title);
-			stm.setString(2, tStarting);			
+			stm.setString(2, tStarting);
 			stm.setInt(3, duration);
 			stm.setInt(4, monitoring);
 			stm.setString(5, address);
@@ -408,14 +439,8 @@ public class Meeting {
 
 	@Override
 	public String toString() {
-		return "Meeting id:" + this.id +" " +
-				" title:" + title + 
-				" owner:"+owner.toString() + 
-				" date:"+ tStarting + 
-				" longitude:"+longitude + 
-				" latitude:"+latitude+
-				" address:"+address+
-				" duration:"+duration+
-				" monitoring:"+monitoring;
+		return "Meeting id:" + this.id + " " + " title:" + title + " owner:" + owner.toString() + " date:" + tStarting
+				+ " longitude:" + longitude + " latitude:" + latitude + " address:" + address + " duration:" + duration
+				+ " monitoring:" + monitoring;
 	}
 }

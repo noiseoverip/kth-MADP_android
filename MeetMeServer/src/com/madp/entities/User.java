@@ -83,9 +83,11 @@ public class User {
 	 * @param name
 	 * @param email
 	 */
-	public User(int id, String email) {
+	public User(int id, String email, double longitude, double latitude) {
 		this.id = id;
 		this.email = email;
+		this.longitude = longitude;
+		this.latitude = latitude;
 	}
 
 	public String getEmail() {
