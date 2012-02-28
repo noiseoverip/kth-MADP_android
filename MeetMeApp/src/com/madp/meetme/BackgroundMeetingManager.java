@@ -77,8 +77,9 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		 * 
 		 * Hardcoded coordinates as we do not set that into the new meetingactivity
 		 * 
-		 * */
-		meeting.setCoordinates(new LatLonPoint(100, 100));
+		 * */		
+		meeting.setLatitude(59.329448);
+		meeting.setLongitude(18.06508);
 		/* ***************************/
 		
 		Intent mapIntent = new Intent(this, GPSFindLocationFromStringOnMap.class);
