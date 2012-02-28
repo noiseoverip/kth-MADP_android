@@ -8,30 +8,28 @@ import java.io.Serializable;
 /**
  * User object. Contain all user related information like: usename, user email, user location...
  * 
- * @author esauali
+ * @author esauali initial version
+ * @author esauali 2012-02-28 removed LatLonpoint
  * 
  */
-public class User implements Serializable{
-	/**
-	 * 
-	 */
+public class User implements Serializable{	
 	private static final long serialVersionUID = 2061673643035123774L;
-	int id;
-	String name;
-	String email;
-	String time; // last location update time
-	LatLonPoint coordinates;
-	double latitude;
-	double longitude;
+	private int id;
+	private String name;
+	private String email;
+	private String time; // last location update time	
+	private double latitude;
+	private double longitude;
+	
 	/**
-	 * Default constuctor
+	 * Default constructor
 	 */
 	public User() {
 
 	}
 
 	/**
-	 * Convinience constructor
+	 * Convenience constructor
 	 * 
 	 * @param id
 	 * @param name
@@ -49,42 +47,26 @@ public class User implements Serializable{
 
 	public int getId() {
 		return id;
-	}
-
-	
+	}	
 	
 	public double getLatitude() {
 		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.coordinates = new LatLonPoint( latitude, this.longitude);
-		this.latitude = latitude;
 	}
 
 	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(double longitude) {
-		this.coordinates = new LatLonPoint( this.latitude, longitude);
-		this.longitude = longitude;
-	}
-
-	public LatLonPoint getCoordinates() {
-		return coordinates;
-	}
-
-	public void setCoordinates(LatLonPoint coordinates) {
-		this.coordinates = coordinates;
-	}
-
 	public String getName() {
 		return name;
 	}
-
+ 
 	public String getTime() {
 		return time;
+	}
+	
+	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException,IOException {
+		aInputStream.defaultReadObject();
 	}
 
 	public void setEmail(String email) {
@@ -95,15 +77,19 @@ public class User implements Serializable{
 		this.id = id;
 	}
 
+	public void setLatitude(double latitude) {		
+		this.latitude = latitude;
+	}
+
+	public void setLongitude(double longitude) {		
+		this.longitude = longitude;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public void setTime(String time) {
 		this.time = time;
-	}
-	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException,IOException {
-		aInputStream.defaultReadObject();
 	}
 
 	/**

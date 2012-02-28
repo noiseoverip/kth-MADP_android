@@ -33,7 +33,7 @@ public class Meeting {
 
 	private com.mysql.jdbc.Connection con;
 
-	private static final String SQL_INSERT_MEETING = "INSERT INTO `meetings`(`title`, `created`, `starting`, `duration`, `monitoring`, `address`, `longitude`, `latitude`,`owner_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String SQL_INSERT_MEETING = "INSERT INTO `meetings`(`title`, `starting`, `duration`, `monitoring`, `address`, `longitude`, `latitude`,`owner_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String SQL_GET_MEETINGS = "SELECT * FROM `meetings` ORDER BY `created` DESC LIMIT ?,?";
 	private static final String SQL_GET_MEETINGS_USER = "SELECT * FROM `meetings` WHERE `meeting_id` IN (SELECT DISTINCT `meeting_id` FROM `participants` WHERE `user_id` = ?) ORDER BY `created` DESC LIMIT ?,?";
 	private static final String SQL_GET_MEETING = "SELECT * FROM `meetings` WHERE `meeting_id`=?";
@@ -309,16 +309,15 @@ public class Meeting {
 			owner = User.getUserByEmail(owner.getEmail(), true);
 
 			// create meeting object
-			stm = con.prepareStatement(SQL_INSERT_MEETING, Statement.RETURN_GENERATED_KEYS);
-			stm.setString(1, this.title);
-			stm.setString(2, this.tCreated);
-			stm.setString(3, this.tStarting);
-			stm.setInt(4, duration);
-			stm.setInt(5, monitoring);
-			stm.setString(6, this.address);
-			stm.setDouble(7, this.longitude);
-			stm.setDouble(8, this.latitude);
-			stm.setInt(9, owner.getId());
+			stm = con.prepareStatement(SQL_INSERT_MEETING, Statement.RETURN_GENERATED_KEYS);			
+			stm.setString(1, title);
+			stm.setString(2, tStarting);			
+			stm.setInt(3, duration);
+			stm.setInt(4, monitoring);
+			stm.setString(5, address);
+			stm.setDouble(6, longitude);
+			stm.setDouble(7, latitude);
+			stm.setInt(8, owner.getId());
 			logger.debug(stm.toString());
 
 			if (stm.executeUpdate() == 1) {
@@ -409,6 +408,14 @@ public class Meeting {
 
 	@Override
 	public String toString() {
-		return "Meeting id:" + this.id;
+		return "Meeting id:" + this.id +" " +
+				" title:" + title + 
+				" owner:"+owner.toString() + 
+				" date:"+ tStarting + 
+				" longitude:"+longitude + 
+				" latitude:"+latitude+
+				" address:"+address+
+				" duration:"+duration+
+				" monitoring:"+monitoring;
 	}
 }
