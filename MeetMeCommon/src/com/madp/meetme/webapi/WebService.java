@@ -43,7 +43,7 @@ public class WebService {
 	}
 	
 	/**
-	 * Pur new meetings to server
+	 * Put new meetings to server
 	 * @param meeting
 	 * @return
 	 */
