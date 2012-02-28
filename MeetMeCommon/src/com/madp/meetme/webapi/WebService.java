@@ -28,7 +28,7 @@ import com.madp.meetme.common.entities.User;
  */
 public class WebService {
 	private static final String TAG = "WebService";
-	private static final String URL_BASE = "http:///MeetMeServer/rest/";	
+	private static final String URL_BASE = "http://megatelis.data.lt:8080/MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";
 	private static final String URL_GET_MEETING_USER =  URL_BASE + "meeting/all/%d/%d/%s";
@@ -65,16 +65,16 @@ public class WebService {
 	
 	/**
 	 * Fetch all user meetings (owner or participant) ordered by date
-	 * @param user
+	 * 
+	 * @param email
 	 * @param limit_from
 	 * @param limit_to
 	 * @return
 	 */
-	public List<Meeting> getUserMeetings(User user,int limit_from, int limit_to) {
-		String response = this.get(String.format(URL_GET_MEETING_USER, limit_from, limit_to, user.getEmail()), null);		
+	public List<Meeting> getUserMeetings(String email,int limit_from, int limit_to) {
+		String response = this.get(String.format(URL_GET_MEETING_USER, limit_from, limit_to, email), null);		
 		return gson.fromJson(response, new TypeToken<List<Meeting>>(){}.getType());
-	}	
-	
+	}
 	/**
 	 * Get meetings by id
 	 * @param id
