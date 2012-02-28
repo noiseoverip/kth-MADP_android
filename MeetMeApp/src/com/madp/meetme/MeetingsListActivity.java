@@ -54,13 +54,14 @@ public class MeetingsListActivity extends ListActivity {
 	
 	private Context mContext;
 	private AlertDialog userNameDialog = null;
-	
+	private SharedPreferences prefs;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.meetinglist);
 		mContext = this;
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		ws = new WebService(new Logger());
 		
 		newMeetingButton = (ImageButton) findViewById(R.id.new_meeting_button);
@@ -165,7 +166,7 @@ public class MeetingsListActivity extends ListActivity {
 	 */
 	private void refreshList() {
 		Log.d(TAG, "refreshList");
-		List<Meeting> meetingsTmp = ws.getMeetings(0, 100);
+		List<Meeting> meetingsTmp = ws.getUserMeetings(prefs.getString(Statics.USERNAME, ""), 0, 100);
 		if (meetingsTmp != null) {
 			meetings = meetingsTmp;
 			if (listAdapter != null) {
