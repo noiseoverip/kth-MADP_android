@@ -75,7 +75,7 @@ public class MeetingInfoActivity extends ListActivity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent myintent = new Intent(v.getContext(),com.madp.meetme.GPSFindLocationOnMap.class);
+				Intent myintent = new Intent(v.getContext(),GPSFindLocationOnMap.class);
 				
 				Bundle b = new Bundle();
 				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));

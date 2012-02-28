@@ -205,6 +205,7 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setLongitude(coordinates.getDLongitude());
 				meeting.setOwner(new User(0, "", "demo@gmail.com"));
 				
+				
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 				User owner = new User(0, prefs.getString(Statics.USERNAME, null), prefs.getString(Statics.USEREMAIL,
