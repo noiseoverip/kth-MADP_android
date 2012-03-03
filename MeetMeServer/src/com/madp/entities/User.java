@@ -20,18 +20,9 @@ import com.madp.utils.SqlUtils;
  * 
  */
 public class User {
-	int id;
-	String name;
-	String email;
-	String time;
-	Double longitude;
-	Double latitude;
-
-	private static Logger logger = Logger.getLogger(User.class);
-
-	private static final String SQL_GET_USER_BY_EMAIL = "SELECT * FROM `users` WHERE `email`=?";
-	private static final String SQL_INSERT_USER = "INSERT INTO `users` (`email`) VALUES (?)";
-	private static final String SQL_UPDATE_LOCATION = "UPDATE `users` SET `longitude`=?, `latitude`=? WHERE `user_id`=?";
+	public enum Status {
+		OK, OK_NOLOC, NO, WAITING
+	};
 
 	public static User getUserByEmail(String email, boolean create) throws Exception {
 
@@ -69,6 +60,21 @@ public class User {
 		return user;
 	}
 
+	int id;
+	String name;
+	String email;
+	String time;
+	Double longitude;;
+	Double latitude;
+
+	private Status currentStatus;
+	private static Logger logger = Logger.getLogger(User.class);
+	private static final String SQL_GET_USER_BY_EMAIL = "SELECT * FROM `users` WHERE `email`=?";
+	private static final String SQL_INSERT_USER = "INSERT INTO `users` (`email`) VALUES (?)";
+
+	private static final String SQL_UPDATE_LOCATION = "UPDATE `users` SET `longitude`=?, `latitude`=? WHERE `user_id`=?";
+	private static final String SQL_UPDATE_STATUS = "UPDATE `participants` SET `status`=? WHERE `meeting_id`=? AND `user_id`=?";
+	
 	/**
 	 * Default constructor
 	 */
@@ -83,11 +89,16 @@ public class User {
 	 * @param name
 	 * @param email
 	 */
-	public User(int id, String email, double longitude, double latitude) {
+	public User(int id, String email, double longitude, double latitude, Status currentStatus) {
 		this.id = id;
 		this.email = email;
 		this.longitude = longitude;
 		this.latitude = latitude;
+		this.currentStatus = currentStatus;
+	}
+
+	public Status getCurrentStatus() {
+		return currentStatus;
 	}
 
 	public String getEmail() {
@@ -114,6 +125,10 @@ public class User {
 		return time;
 	}
 
+	public void setCurrentStatus(Status currentStauts) {
+		this.currentStatus = currentStauts;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -138,6 +153,16 @@ public class User {
 		this.time = time;
 	}
 
+	@Override
+	public String toString() {
+		return "User id:" + id + " name:" + name + " email:" + email + " long" + longitude + " lat:" + latitude
+				+ " status:" + currentStatus;
+	}
+	
+	/**
+	 * Update user in users table
+	 * @throws Exception
+	 */
 	public void update() throws Exception {
 		Connection con = SqlUtils.getConnection();
 		if (con == null) {
@@ -170,9 +195,43 @@ public class User {
 			}
 		}
 	}
+	
+	/**
+	 * Update user status for meeting id
+	 * @param meetingId
+	 * @throws Exception 
+	 */
+	public void updateStatus(int meetingId) throws Exception{
+		Connection con = SqlUtils.getConnection();
+		if (con == null) {
+			throw new Exception(FAILED_CONNECT_MYSQL);
+		}
 
-	@Override
-	public String toString() {
-		return "User id:" + id + " name:" + name + "email:" + email;
+		PreparedStatement stm = null;
+		try {
+			stm = con.prepareStatement(SQL_UPDATE_STATUS);
+			stm.setString(1, this.getCurrentStatus().toString());
+			stm.setInt(2, meetingId);
+			stm.setInt(3, this.id);
+			logger.debug(stm.toString());
+			if (stm.executeUpdate() != 1) {
+				throw new Exception("Could not update user status:" + this.toString());
+			}
+		} finally {
+			if (null != stm) {
+				try {
+					stm.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+			if (null != con) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					logger.error(FAILED_CLOSE_MYSQL, e);
+				}
+			}
+		}
 	}
 }
