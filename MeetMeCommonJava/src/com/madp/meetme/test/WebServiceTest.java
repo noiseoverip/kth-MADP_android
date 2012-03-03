@@ -53,11 +53,9 @@ public class WebServiceTest {
 	public void testCreateAndGetMeeting() {
 		//Create meeting
 		WebService ws = new WebService(logger);		
-		Meeting meeting1 = new Meeting("fff", null, "2012-01-19 12:00", 60, 30, "Kistavagen 20", 54.0, 96.0, new User(0, "demo", "demo@gmail.com"));		
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip1@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip2@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip3@gmail.com"));	
+		Meeting meeting1 = new Meeting("fff", null, "2012-01-19 12:00", 60, 30, "Kistavagen 20", 54.0, 96.0, new User(0, "demo", "noiseoverip@gmail.com"));		
+		meeting1.getParticipants().add(new User(0, null, "saulius@swampyfoot.com"));
+		meeting1.getParticipants().add(new User(0, null, "alisauskas.saulius@gmail.com"));		
 		String response = ws.postMeeting(meeting1);		
 		
 		//Extract meeting id
@@ -75,11 +73,11 @@ public class WebServiceTest {
 		assertEquals(meeting1.getMonitoring(), meetingAfter.getMonitoring());
 		assertEquals(meeting1.getParticipants().size(), meetingAfter.getParticipants().size());
 		assertEquals(meeting1.getOwner().getEmail(), meetingAfter.getOwner().getEmail());
-		assertTrue(meeting1.getOwner().getLatitude() == meetingAfter.getOwner().getLatitude());
-		assertTrue(meeting1.getOwner().getLongitude() == meetingAfter.getOwner().getLongitude());
+		//assertTrue(meeting1.getOwner().getLatitude() == meetingAfter.getOwner().getLatitude());
+		//assertTrue(meeting1.getOwner().getLongitude() == meetingAfter.getOwner().getLongitude());
 		
 		//update user coordinates
-		User user = new User(0, null, "noiseoverip@gmail.com");
+		User user = new User(0, null, "saulius@swampyfoot.com");
 		user.setLatitude(2.2);
 		user.setLongitude(4.4);		
 		assertTrue(ws.updateUser(user));
@@ -94,7 +92,7 @@ public class WebServiceTest {
 		meetingAfter = ws.getMeeting(meetingId);
 		for (User u : meetingAfter.getParticipants()){
 			logger.d(null,"Checking user:"+u);
-			if (u.getEmail().equals("noiseoverip@gmail.com")){
+			if (u.getEmail().equals("saulius@swampyfoot.com")){
 				assertEquals(Status.OK, u.getCurrentStatus());
 			}
 		}
