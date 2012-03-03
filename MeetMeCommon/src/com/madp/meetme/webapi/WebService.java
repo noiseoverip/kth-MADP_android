@@ -28,7 +28,7 @@ import com.madp.meetme.common.entities.User;
  */
 public class WebService {
 	private static final String TAG = "WebService";
-	private static final String URL_BASE = "http://192.168.2.101:8080/MeetMeServer/rest/";	
+	private static final String URL_BASE = "http://0.0.0.0:8080/MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";
 	private static final String URL_GET_MEETING_USER =  URL_BASE + "meeting/all/%d/%d/%s";
