@@ -28,12 +28,13 @@ import com.madp.meetme.common.entities.User;
  */
 public class WebService {
 	private static final String TAG = "WebService";
-	private static final String URL_BASE = "http://megatelis.data.lt:8080/MeetMeServer/rest/";	
+	private static final String URL_BASE = "http://192.168.2.101:8080/MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";
 	private static final String URL_GET_MEETING_USER =  URL_BASE + "meeting/all/%d/%d/%s";
 	private static final String URL_GET_MEETING = URL_BASE + "meeting/%d";		
-	private static final String URL_PUT_USER = URL_BASE + "user";	
+	private static final String URL_PUT_USER = URL_BASE + "user";
+	private static final String URL_PUT_USER_STATUS = URL_BASE + "user/%d";
 	private Gson gson;
 	private LoggerInterface log;
 	
@@ -92,6 +93,10 @@ public class WebService {
 	 */
 	public boolean updateUser(User user){
 		return this.put(URL_PUT_USER, gson.toJson(user));
+	}
+	
+	public boolean updateUserMeetingStatus(int meetingId, User user) {
+		return this.put(String.format(URL_PUT_USER_STATUS, meetingId), gson.toJson(user));
 	}
 	
 	private String post(String url, String jsonString){
