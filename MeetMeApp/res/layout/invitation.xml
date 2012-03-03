@@ -8,8 +8,7 @@
         android:id="@+id/meetingInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="Large Text"/>
 
     <Button
         android:id="@+id/showMeetingInfo"
@@ -41,6 +40,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true"
-        android:text="Show my location" android:layout_gravity="center"/>
+        android:text="Show my location" android:layout_gravity="center" android:visibility="gone"/>
 
 </LinearLayout>
