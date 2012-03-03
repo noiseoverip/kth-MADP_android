@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import com.madp.entities.User.Status;
+import com.madp.utils.EmailUtils;
 import com.madp.utils.SqlUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -391,6 +392,10 @@ public class Meeting {
 				}
 			}
 		}
+		
+		// send emails to participants
+		EmailUtils.emailUsers(this);
+		
 	}
 
 	public void setAddress(String address) {
@@ -436,7 +441,7 @@ public class Meeting {
 	public void settStarting(String tStarting) {
 		this.tStarting = tStarting;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Meeting id:" + this.id + " " + " title:" + title + " owner:" + owner.toString() + " date:" + tStarting
