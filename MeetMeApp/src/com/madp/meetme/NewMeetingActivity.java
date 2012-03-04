@@ -55,7 +55,7 @@ public class NewMeetingActivity extends ListActivity {
 	private EditText nameOfMeeting, nameOfPlace;
 	private String newMeetingName, newMeetingPlace, newMeetingTime, newMeetingDate, smin;
 	private ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
-	private TextView infolabel;
+	private TextView infolabel, currentDateSet, currentTimeSet;
 	private ParticipantsAdapter p_adapter;
 	private static final int TIME_DIALOG_ID = 0;
 	private static final int DATE_DIALOG_ID = 1;
@@ -81,6 +81,8 @@ public class NewMeetingActivity extends ListActivity {
 		meetingDate = (ImageButton) findViewById(R.id.meetingDate);
 		addParticipants = (ImageButton) findViewById(R.id.addParticipants);
 		infolabel = (TextView) findViewById(R.id.infolabel);
+		currentDateSet = (TextView) findViewById(R.id.currentDateSet);
+		currentTimeSet = (TextView) findViewById(R.id.currentTimeSet);
 
 		final Calendar c = Calendar.getInstance();
 
@@ -133,18 +135,8 @@ public class NewMeetingActivity extends ListActivity {
 				
 				/* Post the meeting*/
                 String meetingId = ws.postMeeting(meeting);
-                char [] meetingIdArray = meetingId.toCharArray();
-                char [] idNumber = new char[meetingIdArray.length - 11];
-                int j=0;
-                for(int i = 11; i<meetingIdArray.length;i++){
-                    idNumber[j] = meetingIdArray[i];
-                    j++;
-                }         
-                String result = "";
-                for(int i = 0; i<idNumber.length; i++){
-               	 result += idNumber[i];
-                }
-                int id = Integer.parseInt(result);
+                /* Get the ID of the meeting*/
+                int id = Integer.parseInt(meetingId.split(":")[1].split(" ")[0]);
                 timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
                 setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
 				finish();
@@ -173,6 +165,7 @@ public class NewMeetingActivity extends ListActivity {
 			hour = hourOfDay;
 			min = minute;
 			/* LAYOUTPROBLEM?*/
+			currentTimeSet.setText(hour+ ":"+min);
 		}
 	};
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -182,7 +175,8 @@ public class NewMeetingActivity extends ListActivity {
 			year = thisYear;
 			month = monthOfYear;
 			day = dayOfMonth;
-
+			
+			currentDateSet.setText(day+"/"+month+"-"+year);
 		}
 	};
 

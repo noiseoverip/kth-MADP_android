@@ -31,6 +31,7 @@ public class MeetingInfoActivity extends ListActivity {
 	private Context c;
 	private Meeting meeting;
 	private WebService ws;
+	private String getTime, getDate, getAlarm;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class MeetingInfoActivity extends ListActivity {
 		ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
 		byte [] a=null;
 		
+		
 		Bundle extras = getIntent().getExtras();
 		if(extras != null)
 			 a= extras.getByteArray("meeting");
@@ -61,11 +63,22 @@ public class MeetingInfoActivity extends ListActivity {
 					
 			this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
 			getListView().setAdapter(p_adapter);
-			
 			/* Set meeting info */
+			
+			getTime = meeting.gettStarting();
+			
+			String[] result = getTime.split(" ");
+			getDate = result[0];
+			getTime = result[1];
+			String[] resultDate = getDate.split("-");
+			String[] resultTime = getTime.split(":");
+			
+			
+			
 			infolabel.setText(meeting.getTitle());
-			timelabel.setText(meeting.gettStarting());
-			datelabel.setText(meeting.gettStarting()); // TODO: deal with this, date and time is one thing...
+			timelabel.setText(resultTime[0]+":"+resultTime[1]);
+			datelabel.setText(resultDate[2]+"/"+resultDate[1]+"-"+resultDate[0]); 
+			// TODO: deal with this, date and time is one thing...
 			locationlabel.setText(meeting.getAddress());
 			sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
 		}

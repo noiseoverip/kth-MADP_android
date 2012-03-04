@@ -1,8 +1,6 @@
 package com.madp.meetme;
 
-import com.madp.maps.GPSActivity;
 import com.madp.maps.GPSFindLocationFromStringOnMap;
-import com.madp.maps.GPSLocationFinderActivity;
 import com.madp.meetme.webapi.WebService;
 import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
@@ -21,8 +19,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
+
+/* Background process that sends the user coordinates to server during the meeting. It also display  
+ *  a notification about the meeting. 
+ */
 
 public class BackgroundMeetingManager extends Service implements LocationListener {
 
@@ -36,6 +37,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 	@Override
 	public IBinder onBind(Intent arg0) {return null;}
 
+	/* Inits */
 	@Override
 	public void onCreate() {
 		ws = new WebService(new Logger());
@@ -49,6 +51,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		Toast.makeText(this, "The meeting is now started", Toast.LENGTH_LONG).show();	
 	}
 
+	/* When the meetup is over */
 	@Override
 	public void onDestroy() {
 		Toast.makeText(this, "The Meeting has now stopped. Your position is not displayed in the meeting anymore!", Toast.LENGTH_LONG).show();
@@ -56,10 +59,15 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		notificationManager.cancel(NOTIFICATION_ID);
 	}
 
+	/* During the meeting */
 	@Override
 	public void onStart(Intent intent, int startid) {
 		
-		/* Get the information about the starting meeting */
+		/* Get the id and the meeting object from the MeetingAlarmManager when the meeting should start
+		 * 1) Get the meeting object
+		 * 2) Create notification manager
+		 * 3) Start look for GPS position updates 
+		 *   */
 		int meetingId;
 		Bundle extras = intent.getExtras();
 		meetingId = extras.getInt("meetingid");
@@ -68,8 +76,8 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		/*Start look for locationupdates */
 		Toast.makeText(this, "Your position is now displayed to other participants", Toast.LENGTH_LONG).show();
 		int icon = R.drawable.user;
-		CharSequence ntext = "Current event: Location: Click To View";
-		CharSequence contentTitle = "MeetMe is running" + meeting.getTitle();
+		CharSequence ntext = "MeetMe is started";
+		CharSequence contentTitle = "MeetMe - Click To View";
 		long when = System.currentTimeMillis();
 		
 		
@@ -85,7 +93,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
-		CharSequence contentText = "Press on this to start";
+		CharSequence contentText = meeting.getTitle() + " " + meeting.getAddress();
 		Notification notification = new Notification(icon, ntext, when);
 		
 		notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
@@ -95,6 +103,9 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);		
 	}
 
+	/*	When loocation has changed, update the user object and send it to the server
+	 * 
+	 * */
 	@Override
 	public void onLocationChanged(Location location) {
 	
@@ -117,7 +128,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		*/
 		
-		
+		// Update user position on the server
 		new Thread(new Runnable(){
 			@Override
 			public void run() {

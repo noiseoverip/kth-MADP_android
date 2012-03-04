@@ -6,13 +6,13 @@
     android:orientation="vertical"
     android:textColor="@android:color/black" >
 
-      <RelativeLayout
+    <RelativeLayout
         android:id="@+id/Header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp" >
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp" >
 
         <TextView
             android:id="@+id/infolabel"
@@ -27,8 +27,112 @@
         </TextView>
     </RelativeLayout>
 
-    <!-- Lägg all info HÄR!!!!! -->
+    <LinearLayout
+        android:id="@+id/linearLayout11"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
 
+        <ImageButton
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/time" >
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/meetingtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="0.30"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <ImageButton
+            android:id="@+id/alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/alarm" >
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/alarmtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="0.30"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayout12"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/date" >
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/meetingdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="0.30"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <ImageButton
+            android:id="@+id/iblocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/world" >
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/locationview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="0.30"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
+    </LinearLayout>
+    
+    <!--
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
@@ -156,8 +260,8 @@
             android:text="Participants:"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
-        <!-- Sluta lägga all info HÄR!!!!! -->
-    </LinearLayout>
+  </LinearLayout>
+    -->
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -195,11 +299,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_marginBottom="2dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
                 android:background="@null"
-                android:src="@drawable/plus" >
+                android:src="@drawable/save" >
             </ImageButton>
 
             <ImageButton
@@ -225,5 +329,4 @@
             </ImageButton>
         </RelativeLayout>
     </LinearLayout>
-
 </LinearLayout>

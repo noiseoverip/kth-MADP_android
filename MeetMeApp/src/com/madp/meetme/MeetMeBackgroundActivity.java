@@ -2,12 +2,18 @@ package com.madp.meetme;
 
 
 import android.app.Activity;
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+/*	Class for just testing the background service
+ * 
+ * */
 
 public class MeetMeBackgroundActivity extends Activity implements OnClickListener   { 
   private static final String TAG = "ServicesDemo";
