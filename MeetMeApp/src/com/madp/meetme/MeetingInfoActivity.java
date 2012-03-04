@@ -123,6 +123,19 @@ public class MeetingInfoActivity extends ListActivity {
 			}
 		});
 
+		live_map.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent myintent = new Intent(arg0.getContext(),GPSMovingObjectsActivity.class);
+				
+				Bundle b = new Bundle();
+				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+				myintent.putExtras(b);
+				startActivity(myintent);
+			}
+		});
 		updateAndExit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
