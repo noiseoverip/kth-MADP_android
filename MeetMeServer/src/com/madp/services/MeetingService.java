@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.madp.entities.Meeting;
+import com.madp.utils.EmailUtils;
 
 /**
  * Meeting oject operations
@@ -112,5 +113,17 @@ public class MeetingService {
 		}
 		return meeting;
 	}
-
+	
+	
+	/**
+	 * A method to test emails
+	 * @return
+	 */
+	@GET
+	@Path("message")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response message() {
+		new EmailUtils().sendEmail("ingblond@gmail.com", new String[] {"noiseoverip@gmail.com", "saulius@swampyfoot.com", "alisauskas.saulius@gmail.com"}, "subject", "some strange message");		
+		return Response.status(Response.Status.OK).entity("DONE SOMETHING").build();
+	}
 }

@@ -42,7 +42,6 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		/* sent the data of this user to the server */
 		user = new User(1989, Statics.USERNAME, Statics.USEREMAIL);
-		//user = new User(1989, "Saulius", "noiseoverip@gmail.com");
 		
 		/** **/
 		notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
@@ -68,39 +67,25 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		/*Start look for locationupdates */
 		Toast.makeText(this, "Your position is now displayed to other participants", Toast.LENGTH_LONG).show();
 		int icon = R.drawable.user;
-		CharSequence ntext = "Current event: Location: Click To View";
-		CharSequence contentTitle = "MeetMe is running" + meeting.getTitle();
+		CharSequence ntext = "MeetMe is started";
+		CharSequence contentTitle = "MeetMe - Click To View";
 		long when = System.currentTimeMillis();
-		
-		/*
-		//String title, String tCreated, String tStarting, int duration, int monitoring, String address, double longitude, double latitude, User owner
-		meeting = new Meeting("Meetingtest", "a", "a", 15, 15, "K�rrv�gen 47A, Stockholm, Sweden", 100.0, 150.0, user);
-
-		* HARDCODED SHIT REMOVE LATER 
-		 * 
-		 * Hardcoded coordinates as we do not set that into the new meetingactivity
-		 * 
-		 * 		
-		meeting.setLatitude(59.329448);
-		meeting.setLongitude(18.06508);
-		/* ***************************
 		
 		Intent mapIntent = new Intent(this, GPSMovingObjectsActivity.class);
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
-		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
-		
-		CharSequence contentText = "Press on this to start";
+		CharSequence contentText = meeting.getTitle() + " " + meeting.getAddress();
 		Notification notification = new Notification(icon, ntext, when);
 		
 		notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
 		notificationManager.notify(NOTIFICATION_ID, notification);
-		*/
+		
 		/* Start request updates */
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);		
 	}
 
+	@Override
 	public void onLocationChanged(Location location) {
 	
 		/* Update and send the new position to the server */
@@ -124,6 +109,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		
 		new Thread(new Runnable(){
+			@Override
 			public void run() {
 				ws.updateUser(user);
 			}
@@ -131,15 +117,18 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 
 		/* Broadcast update to mapview activity */
 	}
+	
+	@Override
 	public void onProviderDisabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Disabled", Toast.LENGTH_LONG);
 	}
 
-	
+	@Override
 	public void onProviderEnabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Enabled", Toast.LENGTH_LONG);
 
 	}
 
+	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

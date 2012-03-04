@@ -13,6 +13,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import com.madp.entities.User.Status;
+import com.madp.utils.EmailUtils;
 import com.madp.utils.SqlUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -37,7 +39,7 @@ public class Meeting {
 	private static final String SQL_GET_MEETINGS = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id ORDER BY `created` DESC LIMIT ?,?";
 	private static final String SQL_GET_MEETINGS_USER = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id WHERE `meeting_id` IN (SELECT DISTINCT `meeting_id` FROM `participants` WHERE `user_id` = ?) ORDER BY `created` DESC LIMIT ?,?";
 	private static final String SQL_GET_MEETING = "SELECT `m`.*, `u`.`email`,`u`.`longitude`,`u`.`latitude` FROM `meetings` AS m LEFT JOIN users AS u on m.owner_id=u.user_id WHERE `meeting_id`=?";
-	private static final String SQL_GET_MEETING_PARTICIPANTS = "SELECT u.`user_id`, u.`email`, `u`.`longitude`,`u`.`latitude` FROM `participants` p NATURAL JOIN `users` u WHERE p.`meeting_id`=?";
+	private static final String SQL_GET_MEETING_PARTICIPANTS = "SELECT u.`user_id`, u.`email`, `u`.`longitude`,`u`.`latitude`,`p`.`status` FROM `participants` p NATURAL JOIN `users` u WHERE p.`meeting_id`=?";
 	private static final String SQL_ADD_PARTICIPANT = "INSERT INTO `participants` (meeting_id, user_id) VALUES (?,?)";
 
 	public Meeting() {
@@ -54,7 +56,7 @@ public class Meeting {
 			logger.debug(stm.toString());
 			rs = stm.executeQuery();
 			while (rs.next()) {
-				User participant = new User(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4));
+				User participant = new User(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4), Status.valueOf(rs.getString(5)));
 				participants.add(participant);
 			}
 
@@ -73,8 +75,7 @@ public class Meeting {
 					logger.error(e);
 				}
 			}
-		}
-			
+		}			
 	}
 	/**
 	 * Constructor used for creating Meeting object from database
@@ -184,7 +185,7 @@ public class Meeting {
 			if (rs.next()) {
 				m = new Meeting(rs.getInt(1), rs.getString(3), rs.getString(2), rs.getString(4), rs.getString(5),
 						rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9), new User(rs.getInt(10),
-								rs.getString(11), rs.getDouble(12), rs.getDouble(13)));
+								rs.getString(11), rs.getDouble(12), rs.getDouble(13), null));
 			} else {
 				throw new Exception("Could not find meeting with id:" + id);
 			}
@@ -261,7 +262,7 @@ public class Meeting {
 			while (rs.next()) {
 				Meeting m = new Meeting(rs.getInt(1), rs.getString(3), rs.getString(2), rs.getString(4),
 						rs.getString(5), rs.getString(6), rs.getString(7), rs.getDouble(8), rs.getDouble(9), new User(
-								rs.getInt(10), rs.getString(11), rs.getDouble(12), rs.getDouble(13)));
+								rs.getInt(10), rs.getString(11), rs.getDouble(12), rs.getDouble(13), null));
 				array.add(m);
 				
 				// get meeting participants
@@ -391,6 +392,10 @@ public class Meeting {
 				}
 			}
 		}
+		
+		// send emails to participants
+		EmailUtils.emailUsers(this);
+		
 	}
 
 	public void setAddress(String address) {
@@ -436,7 +441,7 @@ public class Meeting {
 	public void settStarting(String tStarting) {
 		this.tStarting = tStarting;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Meeting id:" + this.id + " " + " title:" + title + " owner:" + owner.toString() + " date:" + tStarting

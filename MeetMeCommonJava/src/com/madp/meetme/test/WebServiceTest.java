@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
+import com.madp.meetme.common.entities.User.Status;
 import com.madp.meetme.webapi.LoggerInterface;
 import com.madp.meetme.webapi.WebService;
 
@@ -52,11 +53,9 @@ public class WebServiceTest {
 	public void testCreateAndGetMeeting() {
 		//Create meeting
 		WebService ws = new WebService(logger);		
-		Meeting meeting1 = new Meeting("fff", null, "2012-01-19 12:00", 60, 30, "Kistavagen 20", 54.0, 96.0, new User(0, "demo", "demo@gmail.com"));		
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip1@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip2@gmail.com"));
-		meeting1.getParticipants().add(new User(0, null, "noiseoverip3@gmail.com"));	
+		Meeting meeting1 = new Meeting("fff", null, "2012-01-19 12:00", 60, 30, "Kistavagen 20", 54.0, 96.0, new User(0, "demo", "noiseoverip@gmail.com"));		
+		meeting1.getParticipants().add(new User(0, null, "saulius@swampyfoot.com"));
+		meeting1.getParticipants().add(new User(0, null, "alisauskas.saulius@gmail.com"));		
 		String response = ws.postMeeting(meeting1);		
 		
 		//Extract meeting id
@@ -67,15 +66,36 @@ public class WebServiceTest {
 		meeting1.setId(meetingId);
 		
 		//Get meeting for comparing			
-		Meeting meeting2 = ws.getMeeting(meetingId);
-		logger.i(TAG, "Received:" + meeting2.toString());
-		assertEquals(meeting1.getTitle(), meeting2.getTitle());
-		assertEquals(meeting1.getDuration(), meeting2.getDuration());
-		assertEquals(meeting1.getMonitoring(), meeting2.getMonitoring());
-		assertEquals(meeting1.getParticipants().size(), meeting2.getParticipants().size());
-		assertEquals(meeting1.getOwner().getEmail(), meeting2.getOwner().getEmail());
-		assertTrue(meeting1.getOwner().getLatitude() == meeting2.getOwner().getLatitude());
-		assertTrue(meeting1.getOwner().getLongitude() == meeting2.getOwner().getLongitude());
+		Meeting meetingAfter = ws.getMeeting(meetingId);
+		logger.i(TAG, "Received:" + meetingAfter.toString());
+		assertEquals(meeting1.getTitle(), meetingAfter.getTitle());
+		assertEquals(meeting1.getDuration(), meetingAfter.getDuration());
+		assertEquals(meeting1.getMonitoring(), meetingAfter.getMonitoring());
+		assertEquals(meeting1.getParticipants().size(), meetingAfter.getParticipants().size());
+		assertEquals(meeting1.getOwner().getEmail(), meetingAfter.getOwner().getEmail());
+		//assertTrue(meeting1.getOwner().getLatitude() == meetingAfter.getOwner().getLatitude());
+		//assertTrue(meeting1.getOwner().getLongitude() == meetingAfter.getOwner().getLongitude());
+		
+		//update user coordinates
+		User user = new User(0, null, "saulius@swampyfoot.com");
+		user.setLatitude(2.2);
+		user.setLongitude(4.4);		
+		assertTrue(ws.updateUser(user));
+		
+		//get meeting info and check user status
+		
+		//Update user status for this meeting
+		user.setCurrentStatus(Status.OK);
+		assertTrue(ws.updateUserMeetingStatus(meetingId, user));
+		
+		//get meeting info and check user status
+		meetingAfter = ws.getMeeting(meetingId);
+		for (User u : meetingAfter.getParticipants()){
+			logger.d(null,"Checking user:"+u);
+			if (u.getEmail().equals("saulius@swampyfoot.com")){
+				assertEquals(Status.OK, u.getCurrentStatus());
+			}
+		}
 	}
 
 	@Test
@@ -93,7 +113,7 @@ public class WebServiceTest {
 		WebService ws = new WebService(logger);
 		User user = new User(0, null, "noiseoverip@gmail.com");
 		user.setLatitude(2.2);
-		user.setLongitude(4.4);
-		assertTrue(ws.updateUser(user));
+		user.setLongitude(4.4);		
+		assertTrue(ws.updateUser(user));		
 	}
 }

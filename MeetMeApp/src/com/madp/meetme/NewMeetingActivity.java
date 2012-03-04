@@ -152,7 +152,7 @@ public class NewMeetingActivity extends ListActivity {
 	private static final String TAG = "NewMeetingActivity";
 	private EditText nameOfMeeting, nameOfPlace;	
 	private ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
-	private TextView infolabel;
+	private TextView infolabel,currentDateSet, currentTimeSet;
 	private ParticipantsAdapter p_adapter;
 	private static final int TIME_DIALOG_ID = 0;
 	private static final int DATE_DIALOG_ID = 1;
@@ -177,6 +177,8 @@ public class NewMeetingActivity extends ListActivity {
 		meetingDate = (ImageButton) findViewById(R.id.meetingDate);
 		addParticipants = (ImageButton) findViewById(R.id.addParticipants);
 		infolabel = (TextView) findViewById(R.id.infolabel);
+		currentDateSet = (TextView) findViewById(R.id.currentDateSet);
+		currentTimeSet = (TextView) findViewById(R.id.currentTimeSet);
 
 		final Calendar c = Calendar.getInstance();
 
@@ -273,6 +275,7 @@ public class NewMeetingActivity extends ListActivity {
 			hour = hourOfDay;
 			min = minute;
 			/* LAYOUTPROBLEM?*/
+			currentTimeSet.setText(hour+ ":"+min);
 		}
 	};
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -282,6 +285,8 @@ public class NewMeetingActivity extends ListActivity {
 			year = thisYear;
 			month = monthOfYear;
 			day = dayOfMonth;
+			
+			currentDateSet.setText(day+"/"+month+"-"+year);
 
 		}
 	};
