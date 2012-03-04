@@ -50,8 +50,8 @@ public class Meeting implements Serializable {
 		this.duration = duration;
 		this.monitoring = monitoring;
 		this.address = address;
-		this.latitude = latitude;
-		this.longitude = longitude;
+		this.latitude =latitude;
+		this.longitude =longitude;
 		this.owner = owner;
 		this.participants = new ArrayList<User>();
 	}
@@ -191,12 +191,15 @@ public class Meeting implements Serializable {
 		this.tStarting = tStarting;
 	}
 
-	@Override
-	public String toString() {
-		return "Meeting id:" + this.id + " starting:" + this.tStarting + " participants:"
-				+ ((participants != null) ? this.participants.size() : 0);
+	public String toString(){
+		return "Meeting id:"+this.id+" starting:"+this.tStarting+" participants:"+((participants != null) ? this.participants.size() : 0);
 	}
-
+		
+	/**
+	 * Always treat de-serialization as a full-blown constructor, by validating
+	 * the final state of the de-serialized object.
+	 */
+	
 	/**
 	 * This is the default implementation of writeObject. Customize if necessary.
 	 */

@@ -1,6 +1,9 @@
 package com.madp.maps;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
@@ -9,15 +12,15 @@ import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
-public class MyItemizedOverlay extends ItemizedOverlay {
+public class MyItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
-	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+	private List<OverlayItem> mOverlays = new Vector();
 	Context mContext;
 	
 	public int FindOverlayItem(String id){
 		for (int i=0; i<mOverlays.size();i++){
 			OverlayItem dummy=mOverlays.get(i);
-			if(dummy.getTitle().toString()==id)
+			if(dummy.getTitle().equals(id))
 				return i;
 		}
 		return -1;
@@ -46,32 +49,27 @@ public class MyItemizedOverlay extends ItemizedOverlay {
 	public MyItemizedOverlay(Drawable defaultMarker, Context context) {
 		  super(defaultMarker);
 		  mContext = context;
-	}
-	@Override
-	protected OverlayItem createItem(int i) {
-	  return mOverlays.get(i);
-	}
-
-	@Override
-	public int size() {
-	  return mOverlays.size();
-	}
-
-	
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent arg0, MapView arg1) {
-		// TODO Auto-generated method stub
-		return super.onTouchEvent(arg0, arg1);
-	}
-	@Override
-	public boolean onTap(GeoPoint p, MapView map)
-    {
-		return super. onTap( p, map);
-    }
+	}	
     
 	public void addOverlay(OverlayItem overlay) {
 	    mOverlays.add(overlay);
 	    populate();
+	}
+	
+	public  void removeOverlay(OverlayItem overlay) {
+	    mOverlays.remove(overlay);
+	    populate();
+	}
+
+	@Override
+	protected OverlayItem createItem(int i) {
+		// TODO Auto-generated method stub
+		return mOverlays.get(i);
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return mOverlays.size();
 	}
 }

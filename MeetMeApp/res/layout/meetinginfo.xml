@@ -118,7 +118,7 @@
         android:layout_height="wrap_content" >
 
         <ImageButton
-            android:id="@+id/iblocation"
+            android:id="@+id/ib_location"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginBottom="5dp"
@@ -203,7 +203,7 @@
             </ImageButton>
 
             <ImageButton
-                android:id="@+id/gotomap"
+                android:id="@+id/ib_live_map"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

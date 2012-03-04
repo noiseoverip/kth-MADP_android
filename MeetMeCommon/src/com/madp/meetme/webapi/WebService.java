@@ -28,6 +28,8 @@ import com.madp.meetme.common.entities.User;
  */
 public class WebService {
 	private static final String TAG = "WebService";
+
+
 	private static final String URL_BASE = "http://megatelis.data.lt:8080/MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";

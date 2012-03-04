@@ -1,10 +1,23 @@
 package com.madp.meetme;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -32,7 +45,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
@@ -51,6 +63,92 @@ import com.madp.utils.Statics;
  * 
  */
 public class NewMeetingActivity extends ListActivity {
+	
+	class LatLonPoint {
+		/*a convinient class to use when using coordinates and maps*/
+		private static final long serialVersionUID = -4119420152413060192L;
+		int lat;
+	    int lon;
+		public LatLonPoint(double latitude, double longitude) {
+	        lat = (int)(latitude * 1E6);
+	        lon = (int) (longitude * 1E6);
+	       	Log.i(null, "point at lat "+latitude+" lon "+longitude);        
+	    }
+	    public int getILongitude(){
+	    	return lon;
+	    }
+	    public int getILatitude(){
+			return lat;    	
+	    }
+	    
+	    public double getDLongitude(){
+	    	return lon/1E6;
+	    }
+	    public double getDLatitude(){
+			return lat/1E6;    	
+	    }
+	}
+	
+	public LatLonPoint  getLatLong(JSONObject jsonObject) {
+		/*extract a LatLonPoint from JSON object received from google server*/
+        Double lon = new Double(0);
+        Double lat = new Double(0);
+
+        try {
+
+            lon = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+                .getJSONObject("geometry").getJSONObject("location")
+                .getDouble("lng");
+
+            lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0)
+                .getJSONObject("geometry").getJSONObject("location")
+                .getDouble("lat");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        Log.i("coordinates::","Lat = "+lat+" Lon = "+lon);
+        return new LatLonPoint(lat,lon);
+    }
+	
+	public static JSONObject getLocationInfo(String address) {
+		/*pull from google server, longitude and latitude of a String address*/
+		Log.i("address info", "address = "+address);
+		
+	    StringBuilder stringBuilder = new StringBuilder();
+	    try {
+
+	    address = address.replaceAll(" ","%20");    
+
+	    HttpPost httppost = new HttpPost("http://maps.google.com/maps/api/geocode/json?address=" + address + "&sensor=false");
+	    HttpClient client = new DefaultHttpClient();
+	    HttpResponse response;
+	    stringBuilder = new StringBuilder();
+	        response = client.execute(httppost);
+	        HttpEntity entity = response.getEntity();
+	        InputStream stream = entity.getContent();
+	        int b;
+	        while ((b = stream.read()) != -1) {
+	            stringBuilder.append((char) b);
+	        }
+	    } catch (ClientProtocolException e) {
+	    } catch (IOException e) {
+	    }
+
+	    JSONObject jsonObject = new JSONObject();
+	    try {
+	        jsonObject = new JSONObject(stringBuilder.toString());
+	    } catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+
+	    return jsonObject;
+	}
+	
+	
 	private static final String TAG = "NewMeetingActivity";
 	private EditText nameOfMeeting, nameOfPlace;	
 	private ImageButton createMeeting, meetingTime, addParticipants, meetingDate;
@@ -112,7 +210,14 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setAddress(nameOfPlace.getText().toString());
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
-				meeting.settStarting(year + "-" + (month+1) + "-" + day + " " + hour + ":" + min);				
+				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
+				LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString())); 
+				Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
+				meeting.setLatitude(coordinates.getDLatitude());
+				meeting.setLongitude(coordinates.getDLongitude());
+				meeting.setOwner(new User(0, "", "demo@gmail.com"));
+				
+				
 				
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

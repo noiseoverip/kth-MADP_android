@@ -46,13 +46,15 @@
 			</intent-filter>
 		</activity>	
 		
-
-		<activity android:name="com.madp.maps.GPSFindLocationFromStringOnMap"
-			android:screenOrientation="portrait">			
-		</activity>
-		
-		<activity android:name="com.madp.maps.GPSMovingObjectsActivity"
-			android:screenOrientation="portrait">			
+		<activity android:name=".GPSMovingObjectsActivity"
+		    android:noHistory="true"
+			android:screenOrientation="portrait">
+		</activity>	
+        
+        <activity android:name=".GPSFindLocationOnMap"
+            android:noHistory="true"
+			android:screenOrientation="portrait">
+			
 		</activity>	
 
         <activity android:name="InvitationActivity" android:label="@string/app_name">

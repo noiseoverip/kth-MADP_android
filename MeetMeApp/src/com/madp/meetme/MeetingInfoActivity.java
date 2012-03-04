@@ -46,7 +46,8 @@ public class MeetingInfoActivity extends ListActivity {
 		TextView locationlabel = (TextView) findViewById(R.id.locationview);
 		ImageButton cancelMeeting = (ImageButton) findViewById(R.id.cancelmeeting);
 		ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
-		ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
+		ImageButton mapbutton	= (ImageButton) findViewById(R.id.ib_location);
+		ImageButton live_map = (ImageButton) findViewById(R.id.ib_live_map);
 		byte [] a=null;
 		
 		Bundle extras = getIntent().getExtras();
@@ -61,6 +62,7 @@ public class MeetingInfoActivity extends ListActivity {
 					
 			this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
 			getListView().setAdapter(p_adapter);
+			Log.i("MeetingInfoActivity, on Create", "lat = "+meeting.getLatitude()+"lot = "+meeting.getLongitude());
 			
 			/* Set meeting info */
 			infolabel.setText(meeting.getTitle());
@@ -68,13 +70,27 @@ public class MeetingInfoActivity extends ListActivity {
 			datelabel.setText(meeting.gettStarting()); // TODO: deal with this, date and time is one thing...
 			locationlabel.setText(meeting.getAddress());
 			sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
+			
 		}
+		live_map.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent myintent = new Intent(arg0.getContext(),GPSMovingObjectsActivity.class);
+				
+				Bundle b = new Bundle();
+				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+				myintent.putExtras(b);
+				startActivity(myintent);
+			}
+		});
 		mapbutton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent myintent = new Intent(v.getContext(),com.madp.maps.GPSFindLocationFromStringOnMap.class);
+				Intent myintent = new Intent(v.getContext(),GPSFindLocationOnMap.class);
 				
 				Bundle b = new Bundle();
 				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));

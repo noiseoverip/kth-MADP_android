@@ -1,15 +1,12 @@
 package com.madp.meetme;
 
 import com.madp.maps.GPSActivity;
-import com.madp.maps.GPSFindLocationFromStringOnMap;
-import com.madp.maps.GPSLocationFinderActivity;
-import com.madp.maps.GPSMovingObjectsActivity;
 import com.madp.meetme.webapi.WebService;
-import com.madp.meetme.common.entities.LatLonPoint;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.utils.Logger;
 import com.madp.utils.SerializerHelper;
+import com.madp.utils.Statics;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -43,8 +40,10 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
 		
-		/* HARDCODED */
-		user = new User(1989, "name", "noiseoverip@gmail.com");
+		/* sent the data of this user to the server */
+		user = new User(1989, Statics.USERNAME, Statics.USEREMAIL);
+		//user = new User(1989, "Saulius", "noiseoverip@gmail.com");
+		
 		/** **/
 		notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		Toast.makeText(this, "The meeting is now started", Toast.LENGTH_LONG).show();	
@@ -73,31 +72,35 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		CharSequence contentTitle = "MeetMe is running" + meeting.getTitle();
 		long when = System.currentTimeMillis();
 		
-		
-		/* HARDCODED SHIT REMOVE LATER 
+		/*
+		//String title, String tCreated, String tStarting, int duration, int monitoring, String address, double longitude, double latitude, User owner
+		meeting = new Meeting("Meetingtest", "a", "a", 15, 15, "K�rrv�gen 47A, Stockholm, Sweden", 100.0, 150.0, user);
+
+		* HARDCODED SHIT REMOVE LATER 
 		 * 
 		 * Hardcoded coordinates as we do not set that into the new meetingactivity
 		 * 
-		 * */		
+		 * 		
 		meeting.setLatitude(59.329448);
 		meeting.setLongitude(18.06508);
-		/* ***************************/
+		/* ***************************
 		
 		Intent mapIntent = new Intent(this, GPSMovingObjectsActivity.class);
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
+		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
+		
 		CharSequence contentText = "Press on this to start";
 		Notification notification = new Notification(icon, ntext, when);
 		
 		notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
 		notificationManager.notify(NOTIFICATION_ID, notification);
-		
+		*/
 		/* Start request updates */
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);		
 	}
 
-	@Override
 	public void onLocationChanged(Location location) {
 	
 		/* Update and send the new position to the server */
@@ -121,7 +124,6 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		
 		new Thread(new Runnable(){
-			@Override
 			public void run() {
 				ws.updateUser(user);
 			}
@@ -129,18 +131,15 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 
 		/* Broadcast update to mapview activity */
 	}
-	
-	@Override
 	public void onProviderDisabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Disabled", Toast.LENGTH_LONG);
 	}
 
-	@Override
+	
 	public void onProviderEnabled(String provider) {
 		Toast.makeText(getApplicationContext(),"GPS Enabled", Toast.LENGTH_LONG);
 
 	}
 
-	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

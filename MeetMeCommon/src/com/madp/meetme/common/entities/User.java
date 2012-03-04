@@ -14,7 +14,8 @@ import java.io.Serializable;
  */
 public class User implements Serializable{	
 	private static final long serialVersionUID = 2061673643035123774L;
-	private int id;
+
+	int id;
 	private String name;
 	private String email;
 	private String time; // last location update time	
@@ -56,7 +57,8 @@ public class User implements Serializable{
 	public double getLongitude() {
 		return longitude;
 	}
-
+	
+	
 	public String getName() {
 		return name;
 	}
