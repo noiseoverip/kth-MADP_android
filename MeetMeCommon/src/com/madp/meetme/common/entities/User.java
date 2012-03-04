@@ -8,30 +8,33 @@ import java.io.Serializable;
 /**
  * User object. Contain all user related information like: usename, user email, user location...
  * 
- * @author esauali
+ * @author esauali initial version
+ * @author esauali 2012-02-28 removed LatLonpoint
  * 
  */
-public class User implements Serializable{
-	/**
-	 * 
-	 */
+public class User implements Serializable {
+	public enum Status {
+		OK, OK_NOLOC, NO, WAITING, FAKE
+	}
+
 	private static final long serialVersionUID = 2061673643035123774L;
-	int id;
-	String name;
-	String email;
-	String time; // last location update time
-	LatLonPoint coordinates;
-	double latitude;
-	double longitude;
+	private int id;
+	private String name;
+	private String email;
+	private String time; // last location update time
+	private double latitude;
+	private double longitude;;
+	private Status currentStatus;
+
 	/**
-	 * Default constuctor
+	 * Default constructor
 	 */
 	public User() {
 
 	}
 
 	/**
-	 * Convinience constructor
+	 * Convenience constructor
 	 * 
 	 * @param id
 	 * @param name
@@ -42,7 +45,20 @@ public class User implements Serializable{
 		this.name = name;
 		this.email = email;
 	}
-	
+
+	/**
+	 * Convenience constructor
+	 * 
+	 * @param email
+	 */
+	public User(String email) {
+		this(-1, null, email);
+	}
+
+	public Status getCurrentStatus() {
+		return currentStatus;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -51,32 +67,12 @@ public class User implements Serializable{
 		return id;
 	}
 
-	
-	
 	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(double latitude) {
-		this.coordinates = new LatLonPoint( latitude, this.longitude);
-		this.latitude = latitude;
-	}
-
 	public double getLongitude() {
 		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.coordinates = new LatLonPoint( this.latitude, longitude);
-		this.longitude = longitude;
-	}
-
-	public LatLonPoint getCoordinates() {
-		return coordinates;
-	}
-
-	public void setCoordinates(LatLonPoint coordinates) {
-		this.coordinates = coordinates;
 	}
 
 	public String getName() {
@@ -87,12 +83,28 @@ public class User implements Serializable{
 		return time;
 	}
 
+	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+		aInputStream.defaultReadObject();
+	}
+
+	public void setCurrentStatus(Status currentStauts) {
+		this.currentStatus = currentStauts;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public void setName(String name) {
@@ -102,17 +114,20 @@ public class User implements Serializable{
 	public void setTime(String time) {
 		this.time = time;
 	}
-	private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException,IOException {
-		aInputStream.defaultReadObject();
-	}
 
 	/**
-	* This is the default implementation of writeObject. Customise if
-	* necessary.
-	*/
+	 * This is the default implementation of writeObject. Customize if necessary.
+	 */
 	private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-	// perform the default serialization for all non-transient, non-static
-	// fields
-	aOutputStream.defaultWriteObject();
+		// perform the default serialization for all non-transient, non-static
+		// fields
+		aOutputStream.defaultWriteObject();
 	}
+
+	@Override
+	public String toString() {
+		return "User id:" + id + " name:" + name + " email:" + email + " long" + longitude + " lat:" + latitude
+				+ " status:" + currentStatus;
+	}
+
 }

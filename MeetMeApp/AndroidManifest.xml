@@ -6,80 +6,71 @@
 
     <uses-sdk android:minSdkVersion="8" />
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />	
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-        <uses-library android:name="com.google.android.maps" />
-
+        <uses-library android:name="com.google.android.maps"/>
+        
         <activity
-            android:name=".MeetingsListActivity"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:name=".MeetingsListActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="MeetingInfoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="meetinginfo" >
-                </action>
+        
+        <activity android:name="MeetingInfoActivity"
+			android:screenOrientation="portrait">
+			android:theme="@android:style/Theme.NoTitleBar" >
+			<intent-filter>
+				<action android:name="meetinginfo"></action>
+				<category android:name="android.intent.category.DEFAULT"></category>
+			</intent-filter>
+		</activity>
+		
+        <activity android:name="NewMeetingActivity"
+			android:screenOrientation="portrait">
+			android:theme="@android:style/Theme.NoTitleBar" >
+			<intent-filter>
+				<action android:name="newmeeting"></action>
+				<category android:name="android.intent.category.DEFAULT"></category>
+			</intent-filter>
+		</activity>	
+		
 
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="NewMeetingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="newmeeting" >
-                </action>
+		<activity android:name="com.madp.maps.GPSFindLocationFromStringOnMap"
+			android:screenOrientation="portrait">			
+		</activity>
+		
+		<activity android:name="com.madp.maps.GPSMovingObjectsActivity"
+			android:screenOrientation="portrait">			
+		</activity>	
 
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.madp.maps.GPSFindLocationFromStringOnMap"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name="InvitationActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar" >
+        <activity android:name="InvitationActivity" 
+        android:theme="@android:style/Theme.NoTitleBar" 
+        android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="meetme.com"
-                    android:pathPattern=".*\\.meeting"
-                    android:scheme="http" />
-/>                
+                <data android:scheme="http" android:host="meetme.com"
+                    android:pathPattern=".*\\.meeting" /> />                
             </intent-filter>
         </activity>
-        <activity
+     <activity
             android:name=".MeetMeBackgroundActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name" 
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -87,11 +78,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service android:name="BackgroundMeetingManager" >
-        </service>
+       
+        <service android:name="BackgroundMeetingManager"></service>
 
         <receiver android:name=".MeetingAlarmManager" />
+        
     </application>
 
 </manifest>

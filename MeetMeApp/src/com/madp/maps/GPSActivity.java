@@ -17,7 +17,11 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-
+/**
+ * 
+ * @author esauali 2012-02-28 Added DrawAtMap(double latitude, double longitude, String id, String snippet,int drawable_item)
+ *
+ */
 public class GPSActivity extends MapActivity {
 
 	protected MapView Mymap;
@@ -45,6 +49,7 @@ public class GPSActivity extends MapActivity {
 	public MapView getMap(){
 		return Mymap;
 	}
+	
 	public void DrawAtMap(LatLonPoint g, String id, String snippet,int drawable_item) {
 		Log.i(LOCATION_SERVICE, "will draw "+id +"at lon= "+g.getILongitude()+" lat= "+g.getILatitude());
         Drawable drawable = this.getResources().getDrawable(drawable_item);
@@ -61,4 +66,9 @@ public class GPSActivity extends MapActivity {
         mapOverlays.add(itemizedoverlay);
         
     }
+	
+	public void DrawAtMap(double latitude, double longitude, String id, String snippet,int drawable_item) {
+		LatLonPoint coordinates = new LatLonPoint(latitude, longitude);
+		this.DrawAtMap(coordinates, id, snippet, drawable_item);
+	}
 }

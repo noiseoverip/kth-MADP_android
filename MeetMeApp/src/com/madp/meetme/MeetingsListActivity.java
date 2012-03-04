@@ -37,7 +37,7 @@ import com.madp.utils.Statics;
  * Display meetings where user is participant or creator. *
  * 
  * @author Niklas and Peter initial version without server integration
- * @author Saulius 2012-02-19 integrated WebService and removed some obsolete stuff
+ * @author Saulius 2012-02-19 integrated WebService and removed some obsolete stuff, added to fetch only user's meetings
  * 
  */
 public class MeetingsListActivity extends ListActivity {	
@@ -52,15 +52,15 @@ public class MeetingsListActivity extends ListActivity {
 
 	private WebService ws;
 	
-	private Context mContext;
-	private AlertDialog userNameDialog = null;
-	
+	private Context mContext;	
+	private SharedPreferences prefs;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.meetinglist);
 		mContext = this;
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		ws = new WebService(new Logger());
 		
 		newMeetingButton = (ImageButton) findViewById(R.id.new_meeting_button);
@@ -80,9 +80,9 @@ public class MeetingsListActivity extends ListActivity {
 			// get default account email
 			final SharedPreferences.Editor prefsEditor = prefs.edit();	
 			Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-			if (accounts.length > 1) {		
+			if (accounts.length > 0) {		
 				Account account = accounts[0];
-				Log.d(TAG, "Found account type:"+account.type+" name:"+account.name+"saving...");		
+				Log.d(TAG, "Found account type:"+account.type+" name:"+account.name+" saving...");		
 				prefsEditor.putString(Statics.USEREMAIL, account.name);
 				prefsEditor.commit();
 			} else {
@@ -143,21 +143,20 @@ public class MeetingsListActivity extends ListActivity {
 		Log.d(TAG, "Result code received:"+resultCode);
 		// TODO: should be two situations: new meeting was created or not, update only if created
 		refreshList();
+		/* refresh() is called everytime and you are adding another meeting ??? WTF !
 		if (requestCode == CREATE_NEW_MEETING_RESULT) {
 			if (resultCode == RESULT_OK) { 
 				Bundle b = data.getExtras();
 				if(b != null){
 					Meeting s = (Meeting) SerializerHelper.deserializeObject(b.getByteArray("meeting"));
-					meetings.add(s);
-					listAdapter = new MeetingsListAdapter(this, R.layout.meetingrow, meetings);
-					setListAdapter(listAdapter);
-					listAdapter.setItems(meetings);
+					meetings.add(s);					
 					listAdapter.notifyDataSetChanged();
 				}
 			}
 		} else if (requestCode == CLICK_ON_MEETING_LIST_ELEMENT_RESULT) {
 			// Meeting deletion and update should be performed in MeetingInfo
 		}
+		*/
 	}
 
 	/**
@@ -165,7 +164,7 @@ public class MeetingsListActivity extends ListActivity {
 	 */
 	private void refreshList() {
 		Log.d(TAG, "refreshList");
-		List<Meeting> meetingsTmp = ws.getMeetings(0, 100);
+		List<Meeting> meetingsTmp = ws.getUserMeetings(prefs.getString(Statics.USEREMAIL, ""), 0, 100);
 		if (meetingsTmp != null) {
 			meetings = meetingsTmp;
 			if (listAdapter != null) {

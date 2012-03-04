@@ -19,30 +19,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.madp.meetme.common.entities.Meeting;
+import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
 import com.madp.utils.Logger;
+import com.madp.utils.SerializerHelper;
+import com.madp.utils.Statics;
 
 /**
- * Activity launched when a link o patter: http:meetme.com/meeting.meeting?id=XX is clicked.
- * User then accepts or declined the meeting invitation
- * Activity send updated to server as well as inform alarm manager
+ * Activity launched when a link o patter: http:meetme.com/meeting.meeting?id=XX is clicked. User then accepts or
+ * declined the meeting invitation Activity send updated to server as well as inform alarm manager
+ * 
  * @author esauali 2012-12-25 Initial version (not finished)
- *
+ * 
  */
 public class InvitationActivity extends Activity {
 	private static final String TAG = "InvitationActivity";
-	private static final String meetingInfoTmp = "Meeting title:%s\nDate:%s\nParticipants:%d\nCreator:%s\n";
+	private static final String meetingInfoTmp = "Meeting title:%s\nDate:%s\nParticipants:%d\nOwner:%s\n";
 	/*
-	private TextView meetingInfo;
-	private Button accept;
-	private Button reject;
-	private CheckBox showLocation;	
+	 * private TextView meetingInfo; private Button accept; private Button reject; private CheckBox showLocation;
 	 */
 	private WebService ws;
 	private AlarmManager am;
 	private long timeLeftToMeetingInMillisec;
 	private Meeting meeting;
-	
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.invitation);
@@ -76,16 +76,26 @@ public class InvitationActivity extends Activity {
 				meeting.getTitle(), 
 				meeting.gettStarting(), 
 				meeting.getParticipants().size(), 
-				meeting.getOwner().getName()));	
+				meeting.getOwner().getEmail()));	
 
 		((Button) this.findViewById(R.id.accept)).setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {		
 				// Get "showLocation checkBox value"
 				final boolean showLocation = ((CheckBox) ((Activity) v.getContext()).findViewById(R.id.showLocation)).isChecked();				
-				Log.d(TAG, "User selected accept, showLocation:"+showLocation);
-
+				Log.d(TAG, "User selected accept, showLocation:"+showLocation);			
+				
 				// send up date to server
+				final User user = new User(Statics.getUserEmail(v.getContext()));
+				user.setCurrentStatus(User.Status.OK);				
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						ws.updateUserMeetingStatus(meeting.getId(), user);						
+					};
+				});
+				
 
 				// inform alarm manager
 				String meetingStartsIn = meeting.gettStarting();
@@ -101,6 +111,8 @@ public class InvitationActivity extends Activity {
 
 				timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
 				setOneTimeAlarm(timeLeftToMeetingInMillisec, meeting.getId());
+				
+				exit();
 			}
 		});
 
@@ -110,32 +122,55 @@ public class InvitationActivity extends Activity {
 			public void onClick(View v) {				
 				Log.d(TAG, "User selected reject");
 
-				// send update to server
+				// send update to server				
+				final User user = new User(Statics.getUserEmail(v.getContext()));
+				user.setCurrentStatus(User.Status.NO);
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						ws.updateUserMeetingStatus(meeting.getId(), user);						
+					};
+				});
+				
+				exit();
+			}
+		});
+		
+		((Button) this.findViewById(R.id.showMeetingInfo)).setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				Intent a = new Intent(v.getContext(), MeetingInfoActivity.class);
+				a.putExtra("meeting", SerializerHelper.serializeObject(meeting));
+				startActivity(a);
 			}
 		});
 	}
-	/*  Turn clock 15 min back */
-	private long TimeToMeetingInLong(int newYear, int newMonth, int newDay, int newHour, int newMin){
 
-        Date d1 = new GregorianCalendar(newYear, newMonth, newDay, newHour, newMin).getTime();
-        Date today = new Date();
-        System.out.println(d1.getTime() - today.getTime());
-        System.out.println(d1.getTime() + " " + today.getTime());
-        return (d1.getTime() - today.getTime());
-    }
-	
-	
-	
-    public void setOneTimeAlarm(long timeLeftToMeetingInMillisec, int id) {
-        am = (AlarmManager) getSystemService(Context.ALARM_SERVICE); 
-        Intent meetingIntent = new Intent(this, MeetingAlarmManager.class);
-        meetingIntent.putExtra("meetingid", id);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                meetingIntent, PendingIntent.FLAG_ONE_SHOT);
+	/* Turn clock 15 min back */
+	private long TimeToMeetingInLong(int newYear, int newMonth, int newDay, int newHour, int newMin) {
+		Date d1 = new GregorianCalendar(newYear, newMonth, newDay, newHour, newMin).getTime();
+		Date today = new Date();
+		System.out.println(d1.getTime() - today.getTime()); // Should be logger
+		System.out.println(d1.getTime() + " " + today.getTime()); // Should be logger
+		return (d1.getTime() - today.getTime());
+	}
 
-        Calendar cal = Calendar.getInstance();
-        am.set(AlarmManager.RTC_WAKEUP,
-                (System.currentTimeMillis() + timeLeftToMeetingInMillisec), pendingIntent);
-    }
-	
+	public void setOneTimeAlarm(long timeLeftToMeetingInMillisec, int id) {
+		am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		Intent meetingIntent = new Intent(this, MeetingAlarmManager.class);
+		meetingIntent.putExtra("meetingid", id);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, meetingIntent, PendingIntent.FLAG_ONE_SHOT);
+
+		Calendar cal = Calendar.getInstance();
+		am.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + timeLeftToMeetingInMillisec), pendingIntent);
+	}
+
+	/**
+	 * Exit this activity
+	 */
+	private void exit() {
+		this.finish();
+	}
+
 }

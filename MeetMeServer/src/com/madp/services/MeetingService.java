@@ -12,7 +12,15 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.madp.entities.Meeting;
+import com.madp.utils.EmailUtils;
 
+/**
+ * Meeting oject operations
+ * 
+ * @author esauali 2012-02-20 Initial version
+ * @author esauali 2012-02-28 Add attach participants to meeting object, javadoc
+ *
+ */
 @Path("/meeting")
 public class MeetingService {
 
@@ -27,7 +35,7 @@ public class MeetingService {
 		try {
 			meeting.persist();
 		} catch (Exception e) {
-			logger.error("Could not persist meeting", e);
+			logger.error("Could not persist meeting:"+meeting.toString(), e);
 			return Response.status(Response.Status.BAD_REQUEST).entity(meeting.toString()).build();
 		}
 
@@ -105,5 +113,17 @@ public class MeetingService {
 		}
 		return meeting;
 	}
-
+	
+	
+	/**
+	 * A method to test emails
+	 * @return
+	 */
+	@GET
+	@Path("message")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response message() {
+		new EmailUtils().sendEmail("ingblond@gmail.com", new String[] {"noiseoverip@gmail.com", "saulius@swampyfoot.com", "alisauskas.saulius@gmail.com"}, "subject", "some strange message");		
+		return Response.status(Response.Status.OK).entity("DONE SOMETHING").build();
+	}
 }

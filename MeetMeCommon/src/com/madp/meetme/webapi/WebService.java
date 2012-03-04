@@ -19,14 +19,22 @@ import com.google.gson.reflect.TypeToken;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 
+/**
+ * API for communication with MeetMe server
+ * 
+ * @author esauali 2012-02-16 initial implementation
+ * @author esauali 2012-02-28 fixed server URL, javadocs
+ *
+ */
 public class WebService {
 	private static final String TAG = "WebService";
-	private static final String URL_BASE = "http://92.61.38.186:8080/MeetMeServer/rest/";	
+	private static final String URL_BASE = "http://0.0.0.0:8080/MeetMeServer/rest/";	
 	private static final String URL_POST_MEETING = URL_BASE + "meeting";
 	private static final String URL_GET_MEETING_ALL =  URL_BASE + "meeting/all/%d/%d";
 	private static final String URL_GET_MEETING_USER =  URL_BASE + "meeting/all/%d/%d/%s";
 	private static final String URL_GET_MEETING = URL_BASE + "meeting/%d";		
-	private static final String URL_PUT_USER = URL_BASE + "user";	
+	private static final String URL_PUT_USER = URL_BASE + "user";
+	private static final String URL_PUT_USER_STATUS = URL_BASE + "user/%d";
 	private Gson gson;
 	private LoggerInterface log;
 	
@@ -36,7 +44,7 @@ public class WebService {
 	}
 	
 	/**
-	 * Pur new meetings to server
+	 * Put new meetings to server
 	 * @param meeting
 	 * @return
 	 */
@@ -58,16 +66,16 @@ public class WebService {
 	
 	/**
 	 * Fetch all user meetings (owner or participant) ordered by date
-	 * @param user
+	 * 
+	 * @param email
 	 * @param limit_from
 	 * @param limit_to
 	 * @return
 	 */
-	public List<Meeting> getUserMeetings(User user,int limit_from, int limit_to) {
-		String response = this.get(String.format(URL_GET_MEETING_USER, limit_from, limit_to, user.getEmail()), null);		
+	public List<Meeting> getUserMeetings(String email,int limit_from, int limit_to) {
+		String response = this.get(String.format(URL_GET_MEETING_USER, limit_from, limit_to, email), null);		
 		return gson.fromJson(response, new TypeToken<List<Meeting>>(){}.getType());
-	}	
-	
+	}
 	/**
 	 * Get meetings by id
 	 * @param id
@@ -85,6 +93,10 @@ public class WebService {
 	 */
 	public boolean updateUser(User user){
 		return this.put(URL_PUT_USER, gson.toJson(user));
+	}
+	
+	public boolean updateUserMeetingStatus(int meetingId, User user) {
+		return this.put(String.format(URL_PUT_USER_STATUS, meetingId), gson.toJson(user));
 	}
 	
 	private String post(String url, String jsonString){
