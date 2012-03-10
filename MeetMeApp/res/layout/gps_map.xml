@@ -3,23 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
- 	
- 	<FrameLayout
+
+    <com.google.android.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
-    
-	    <com.google.android.maps.MapView 
-	        android:id="@+id/mapView"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:enabled="true"
-	        android:clickable="true"
-	        android:apiKey="09OE9Gq7m7-tNsyR2iFURoCUzyEvr9ZiVTBAyTw"/>
-    
-    
-    </FrameLayout>
-   <LinearLayout
+        android:layout_weight="1.00"
+        android:apiKey="0HFFTEUaESuZjr0eHsE1MnY6f890E_zc3uTTd9Q"
+        android:clickable="true"
+        android:enabled="true" />
+
+    <LinearLayout
         style="@android:style/ButtonBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -34,7 +28,6 @@
             android:background="@null"
             android:src="@drawable/delete" >
         </ImageButton>
-        
     </LinearLayout>
-    
+
 </LinearLayout>
