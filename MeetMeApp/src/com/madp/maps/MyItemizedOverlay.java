@@ -1,27 +1,30 @@
 package com.madp.maps;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.view.MotionEvent;
-import com.google.android.maps.GeoPoint;
+
 import com.google.android.maps.ItemizedOverlay;
-import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
+/**
+ * 
+ * @author Argyris initial version
+ * @author esauali add clear(), add populate to DeleteOverlayItem, modify FindOverlayItem
+ *
+ */
 public class MyItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
-	private List<OverlayItem> mOverlays = new Vector();
+	private List<OverlayItem> mOverlays = new Vector<OverlayItem>();
 	Context mContext;
 	
 	public int FindOverlayItem(String id){
-		for (int i=0; i<mOverlays.size();i++){
-			OverlayItem dummy=mOverlays.get(i);
-			if(dummy.getTitle().equals(id))
-				return i;
+		for (OverlayItem item : mOverlays){			
+			if(item.getTitle().equals(id)){
+				return mOverlays.indexOf(item);
+			}
 		}
 		return -1;
 		
@@ -39,6 +42,7 @@ public class MyItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		if(pos != -1){
 			mOverlays.remove(pos);
 		}
+		populate();
 	}
 	
 	public MyItemizedOverlay(Drawable defaultMarker) {
@@ -56,7 +60,7 @@ public class MyItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	    populate();
 	}
 	
-	public  void removeOverlay(OverlayItem overlay) {
+	public void removeOverlay(OverlayItem overlay) {
 	    mOverlays.remove(overlay);
 	    populate();
 	}
@@ -71,5 +75,10 @@ public class MyItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public int size() {
 		// TODO Auto-generated method stub
 		return mOverlays.size();
+	}
+	
+	public void clear() {
+		mOverlays.clear();
+	    populate();
 	}
 }
