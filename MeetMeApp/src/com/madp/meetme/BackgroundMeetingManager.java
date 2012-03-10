@@ -68,14 +68,14 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		Toast.makeText(this, "Your position is now displayed to other participants", Toast.LENGTH_LONG).show();
 		int icon = R.drawable.user;
 		CharSequence ntext = "MeetMe is started";
-		CharSequence contentTitle = "MeetMe - Click To View";
+		CharSequence contentTitle = "MeetMe is sharing your position";
 		long when = System.currentTimeMillis();
 		
 		Intent mapIntent = new Intent(this, GPSMovingObjectsActivity.class);
 		mapIntent.putExtra("meeting", SerializerHelper.serializeObject(meeting));
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
-		CharSequence contentText = meeting.getTitle() + " " + meeting.getAddress();
+		CharSequence contentText = meeting.getTitle() + " at " + meeting.getAddress();
 		Notification notification = new Notification(icon, ntext, when);
 		
 		notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
