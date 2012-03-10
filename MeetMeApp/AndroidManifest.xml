@@ -55,8 +55,12 @@
         
         <activity android:name=".GPSFindLocationOnMap"
             android:noHistory="true"
-			android:screenOrientation="portrait">
-			
+			android:screenOrientation="portrait">			
+		</activity>	
+		
+        <activity android:name="GPSPlaceAMeeting"
+            android:noHistory="true"
+			android:screenOrientation="portrait">			
 		</activity>	
 
         <activity android:name="InvitationActivity" 
