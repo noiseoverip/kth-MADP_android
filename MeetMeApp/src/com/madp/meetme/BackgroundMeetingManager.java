@@ -30,6 +30,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 	private NotificationManager notificationManager;
 	private Meeting meeting;
 	private static final int NOTIFICATION_ID = 654321;
+	private Notification notification;
 	
 	@Override
 	public IBinder onBind(Intent arg0) {return null;}
@@ -45,12 +46,12 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		/** **/
 		notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		Toast.makeText(this, "The meeting is now started", Toast.LENGTH_LONG).show();	
+		Toast.makeText(this, "MeetMe has started", Toast.LENGTH_LONG).show();	
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "The Meeting has now stopped. Your position is not displayed in the meeting anymore!", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "The Meeting has stopped. Your position is not displayed in the meeting anymore!", Toast.LENGTH_LONG).show();
 		lm.removeUpdates(this);
 		notificationManager.cancel(NOTIFICATION_ID);
 	}
@@ -67,7 +68,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		/*Start look for locationupdates */
 		Toast.makeText(this, "Your position is now displayed to other participants", Toast.LENGTH_LONG).show();
 		int icon = R.drawable.user;
-		CharSequence ntext = "MeetMe is started";
+		CharSequence ntext = "MeetMe has started";
 		CharSequence contentTitle = "MeetMe is sharing your position";
 		long when = System.currentTimeMillis();
 		
@@ -76,9 +77,10 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, mapIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
 		CharSequence contentText = meeting.getTitle() + " at " + meeting.getAddress();
-		Notification notification = new Notification(icon, ntext, when);
+		notification = new Notification(icon, ntext, when);
 		
 		notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notificationManager.notify(NOTIFICATION_ID, notification);
 		
 		/* Start request updates */
@@ -87,7 +89,7 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 
 	@Override
 	public void onLocationChanged(Location location) {
-	
+				
 		/* Update and send the new position to the server */
 		double latitude = location.getLatitude();
 		double longitude = location.getLongitude();
