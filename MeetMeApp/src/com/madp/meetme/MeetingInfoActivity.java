@@ -37,7 +37,7 @@ public class MeetingInfoActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.meetinginfo);
-
+		
 		/* Create important stuff */
 		ws = new WebService(new Logger());
 		TextView infolabel = (TextView) findViewById(R.id.infolabel);
@@ -46,7 +46,7 @@ public class MeetingInfoActivity extends ListActivity {
 		TextView sessionstartlabel = (TextView) findViewById(R.id.alarmtime);
 		TextView locationlabel = (TextView) findViewById(R.id.locationview);
 		ImageButton cancelMeeting = (ImageButton) findViewById(R.id.cancelmeeting);
-		ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
+		final ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
 		ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
 		ImageButton live_map = (ImageButton) findViewById(R.id.ib_live_map);
 		byte [] a=null;
@@ -104,6 +104,7 @@ public class MeetingInfoActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+					
 				builder.setMessage("Are you sure you want to delete this meeting?").setCancelable(false)
 						.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 							@Override
@@ -125,7 +126,6 @@ public class MeetingInfoActivity extends ListActivity {
 
 		live_map.setOnClickListener(new View.OnClickListener() {
 			
-			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				Intent myintent = new Intent(arg0.getContext(),GPSMovingObjectsActivity.class);
@@ -136,15 +136,20 @@ public class MeetingInfoActivity extends ListActivity {
 				startActivity(myintent);
 			}
 		});
+		
+		/* TODO: Add this button in the layout of meeting info!!!*/
 		updateAndExit.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				int i = 0;
 				// TODO: to be implemented in WebService
+				
+				// Stop service when pressing exit
+				updateAndExit.setClickable(false);
+				stopService(new Intent(v.getContext(), BackgroundMeetingManager.class));
+				
 				finish();
 			}
 		});
-
 	}
 
 	// /TODO: should be fixed to support two arguments: starting date time (e.g '2012-02-02 11:50') and number of

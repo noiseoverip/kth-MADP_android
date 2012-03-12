@@ -163,7 +163,7 @@ public class InvitationActivity extends Activity {
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, meetingIntent, PendingIntent.FLAG_ONE_SHOT);
 
 		Calendar cal = Calendar.getInstance();
-		am.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + timeLeftToMeetingInMillisec), pendingIntent);
+		am.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + timeLeftToMeetingInMillisec-900000), pendingIntent);
 	}
 
 	/**

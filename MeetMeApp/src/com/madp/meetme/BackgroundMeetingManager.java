@@ -31,12 +31,15 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 	private Meeting meeting;
 	private static final int NOTIFICATION_ID = 654321;
 	private Notification notification;
+	private long timeAtStart = 0;
 	
 	@Override
 	public IBinder onBind(Intent arg0) {return null;}
 
 	@Override
 	public void onCreate() {
+		timeAtStart = System.currentTimeMillis(); /* Save timestamp */
+		
 		ws = new WebService(new Logger());
 		lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
@@ -83,13 +86,19 @@ public class BackgroundMeetingManager extends Service implements LocationListene
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		notificationManager.notify(NOTIFICATION_ID, notification);
 		
-		/* Start request updates */
+		/* Start request updates */	
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);		
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-				
+		
+		
+		/* If 30 min has passed (15 min after meeting), stop service! */
+		if(System.currentTimeMillis() - timeAtStart >= 1800000){
+			this.stopSelf();
+		}
+		
 		/* Update and send the new position to the server */
 		double latitude = location.getLatitude();
 		double longitude = location.getLongitude();
