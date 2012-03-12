@@ -42,12 +42,12 @@ public class MeetingInfoActivity extends ListActivity {
 		ws = new WebService(new Logger());
 		TextView infolabel = (TextView) findViewById(R.id.infolabel);
 		TextView timelabel = (TextView) findViewById(R.id.meetingtime);
+		TextView alarmlabel = (TextView) findViewById(R.id.alarmtime);
 		TextView datelabel = (TextView) findViewById(R.id.meetingdate);
-		TextView sessionstartlabel = (TextView) findViewById(R.id.alarmtime);
 		TextView locationlabel = (TextView) findViewById(R.id.locationview);
 		ImageButton cancelMeeting = (ImageButton) findViewById(R.id.cancelmeeting);
 		final ImageButton updateAndExit = (ImageButton) findViewById(R.id.update);
-		ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
+		//ImageButton mapbutton	= (ImageButton) findViewById(R.id.iblocation);
 		ImageButton live_map = (ImageButton) findViewById(R.id.ib_live_map);
 		byte [] a=null;
 		
@@ -73,29 +73,29 @@ public class MeetingInfoActivity extends ListActivity {
 			getTime = result[1];
 			String[] resultDate = getDate.split("-");
 			String[] resultTime = getTime.split(":");
-			
-			
+			String resultTimeString =resultTime[0]+":"+resultTime[1];
+			String alarmtime = calculateAlarmTime(resultTimeString, 15);
 			
 			infolabel.setText(meeting.getTitle());
-			timelabel.setText(resultTime[0]+":"+resultTime[1]);
+			alarmlabel.setText(alarmtime);
+			timelabel.setText(resultTimeString);
 			datelabel.setText(resultDate[2]+"/"+resultDate[1]+"-"+resultDate[0]); 
 			// TODO: deal with this, date and time is one thing...
 			locationlabel.setText(meeting.getAddress());
-			sessionstartlabel.setText(meeting.gettStarting()); // TODO: fix this
 		}
-		mapbutton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent myintent = new Intent(v.getContext(),GPSFindLocationOnMap.class);
-				
-				Bundle b = new Bundle();
-				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
-				myintent.putExtras(b);
-				startActivity(myintent);
-			}
-		});
+//		mapbutton.setOnClickListener(new View.OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				Intent myintent = new Intent(v.getContext(),GPSFindLocationOnMap.class);
+//				
+//				Bundle b = new Bundle();
+//				b.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+//				myintent.putExtras(b);
+//				startActivity(myintent);
+//			}
+//		});
 		
 		
 		

@@ -42,11 +42,39 @@ public class InvitationActivity extends Activity {
 	private AlarmManager am;
 	private long timeLeftToMeetingInMillisec;
 	private Meeting meeting;
+	private TextView meetingNameDisplay; 
+	//meetingInfoDisplay, meetingInfoDisplay2;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.invitation);
 
+		// inform alarm manager
+		String meetingStartsIn = meeting.gettStarting();
+		meetingStartsIn = meetingStartsIn.replaceAll(" ", "-");
+		meetingStartsIn = meetingStartsIn.replaceAll(":", "-");
+		String[] meetingStart = meetingStartsIn.split("-");
+
+		int year = Integer.parseInt(meetingStart[0]);
+		int month = Integer.parseInt(meetingStart[1]);
+		int day = Integer.parseInt(meetingStart[2]);
+		int hour = Integer.parseInt(meetingStart[3]);
+		int min = Integer.parseInt(meetingStart[4]);
+
+		timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
+		setOneTimeAlarm(timeLeftToMeetingInMillisec, meeting.getId());
+
+		// Layout variables
+		String meetingName = meeting.getTitle();
+		meetingNameDisplay = (TextView) findViewById(R.id.meetingName);
+		meetingNameDisplay.setText(meetingName);
+//		String meetingDate = "Date: " + day + "/" + month +"-"+ year;
+//		meetingInfoDisplay = (TextView) findViewById(R.id.meetinInfoDisplay);
+//		meetingInfoDisplay.setText(meetingDate);
+//		String meetingTime = "Starts: " + hour + ":" + min;
+//		meetingInfoDisplay2 = (TextView) findViewById(R.id.meetinInfoDisplay2);
+//		meetingInfoDisplay2.setText(meetingDate);
+		
 		// Bind views
 		//meetingInfo = (TextView) this.findViewById(R.id.meetingInfo);
 
@@ -116,7 +144,7 @@ public class InvitationActivity extends Activity {
 			}
 		});
 
-		((Button) this.findViewById(R.id.reject)).setOnClickListener(new OnClickListener() {
+		((Button) this.findViewById(R.id.decline)).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {				
@@ -137,14 +165,14 @@ public class InvitationActivity extends Activity {
 			}
 		});
 		
-		((Button) this.findViewById(R.id.showMeetingInfo)).setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				Intent a = new Intent(v.getContext(), MeetingInfoActivity.class);
-				a.putExtra("meeting", SerializerHelper.serializeObject(meeting));
-				startActivity(a);
-			}
-		});
+//		((Button) this.findViewById(R.id.showMeetingInfo)).setOnClickListener(new OnClickListener() {
+//
+//			public void onClick(View v) {
+//				Intent a = new Intent(v.getContext(), MeetingInfoActivity.class);
+//				a.putExtra("meeting", SerializerHelper.serializeObject(meeting));
+//				startActivity(a);
+//			}
+//		});
 	}
 
 	/* Turn clock 15 min back */
