@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
+import com.madp.maps.GPSListener;
 
 //TODO: should initially zoom in to current user location
 /**
@@ -26,21 +30,42 @@ import com.google.android.maps.OverlayItem;
  * @author esauali 2012-03-05 Initial version
  *
  */
-public class GPSPlaceAMeeting extends MapActivity {
+public class GPSPlaceAMeeting extends MapActivity implements LocationListener {
 	
 	private static final String TAG = "GPSPlaceAMeeting";
 	
+	private LocationManager lm;
 	private MapView mapView;
 	private MapController mapCon;
 	private Context mContext;	
 	private GeoPoint geoPoint;
+    double longitude;
+    double latitude;
 	
 	@Override
 	protected boolean isRouteDisplayed() {		
 		return false;
 	}
   
-	@Override
+	public void onLocationChanged(Location location) {		
+		/* Update and send the new position to the server */
+		latitude = location.getLatitude();
+		longitude = location.getLongitude();		
+		Toast.makeText(this, "Moved to latitude: " + latitude * 1000000 + " longitude: " + longitude*1000000, Toast.LENGTH_LONG).show();
+		mapCon.animateTo(new GeoPoint((int)latitude*1000000,(int)longitude *1000000));
+	}
+	
+	public void onProviderDisabled(String provider) {
+		Toast.makeText(getApplicationContext(),"GPS Disabled", Toast.LENGTH_LONG);
+	}
+
+	public void onProviderEnabled(String provider) {
+		Toast.makeText(getApplicationContext(),"GPS Enabled", Toast.LENGTH_LONG);
+
+	}
+
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gps_map);
@@ -51,6 +76,7 @@ public class GPSPlaceAMeeting extends MapActivity {
 		
 		mapView.getOverlays().add(new AddLocationOverlay());
 		mapCon = (MapController) mapView.getController();
+		lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
 		ImageButton cancel = (ImageButton) findViewById(R.id.ib_map_logout);	
 		cancel.setOnClickListener(new View.OnClickListener() {
@@ -70,8 +96,9 @@ public class GPSPlaceAMeeting extends MapActivity {
 				}
 			}
 		});
-		
-		mapCon.animateTo(new GeoPoint(59404862,17949859)); //kth location
+		/*get user's current position and animate map to that location*/
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);
+		//mapCon.animateTo(new GeoPoint(59404862,17949859)); //kth location
 		mapCon.setZoom(16);		
 	}
 	
