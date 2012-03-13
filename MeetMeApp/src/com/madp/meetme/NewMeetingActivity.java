@@ -200,7 +200,16 @@ public class NewMeetingActivity extends ListActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(v.getContext(), GPSPlaceAMeeting.class);				
+				Intent intent = new Intent(v.getContext(), GPSPlaceAMeeting.class);	
+				meeting.setAddress(nameOfPlace.getText().toString());
+				LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
+				Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
+				meeting.setLatitude(coordinates.getDLatitude());
+				meeting.setLongitude(coordinates.getDLongitude());
+
+				Bundle s = new Bundle();
+				s.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
+				intent.putExtras(s);
 				startActivityForResult(intent, REQUEST_CODE_POINTONMAP);				
 			}
 			
@@ -227,10 +236,10 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
 				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
-				// LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
-				// Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
-				// meeting.setLatitude(coordinates.getDLatitude());
-				// meeting.setLongitude(coordinates.getDLongitude());
+				 LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
+				 Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
+				 meeting.setLatitude(coordinates.getDLatitude());
+				 meeting.setLongitude(coordinates.getDLongitude());
 
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

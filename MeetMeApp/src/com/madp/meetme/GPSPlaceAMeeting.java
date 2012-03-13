@@ -22,6 +22,8 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.madp.maps.GPSListener;
+import com.madp.meetme.common.entities.Meeting;
+import com.madp.utils.SerializerHelper;
 
 //TODO: should initially zoom in to current user location
 /**
@@ -78,7 +80,47 @@ public class GPSPlaceAMeeting extends MapActivity implements LocationListener {
 		mapCon = (MapController) mapView.getController();
 		lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
+		
+		Meeting m = null;
 		ImageButton cancel = (ImageButton) findViewById(R.id.ib_map_logout);	
+		
+		Bundle b = getIntent().getExtras();
+		if(b == null){
+			Log.e(TAG, "error getting extras from activity");
+			/*user has not enter something on the address field*/
+			/*get user's current position and animate map to that location*/
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);
+			//mapCon.animateTo(new GeoPoint(59404862,17949859)); //kth location
+			
+		}
+		else{
+				byte a[] = b.getByteArray("meeting");
+				if(a == null){
+					Log.e(TAG, "error getting byte array");
+				}
+				else{
+					 m = (Meeting) SerializerHelper.deserializeObject(a);
+					 if(m == null){
+							lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);
+							Log.e(TAG, "error deserializing");
+
+					 }
+					 else if(!m.getAddress().equals("")){
+							/*user has entered location address*/
+						 	Log.d(TAG, "address = "+m.getAddress());
+						 	Log.d(TAG, "Coordinates:Lat = "+m.getLatitude());
+						 	Log.d(TAG, "Coordinates:Lon = "+m.getLongitude());
+						 	
+							mapCon.animateTo(new GeoPoint((int)m.getLatitude()*1000000,(int)m.getLongitude() *1000000));
+							mapCon.setZoom(15);
+					}
+					else
+						lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);
+
+				}
+		}
+		
+		
 		cancel.setOnClickListener(new View.OnClickListener() {
 			//TODO: should handle situation when user doesn't select the point on map
 			@Override
@@ -96,10 +138,7 @@ public class GPSPlaceAMeeting extends MapActivity implements LocationListener {
 				}
 			}
 		});
-		/*get user's current position and animate map to that location*/
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 10.0f, this);
-		//mapCon.animateTo(new GeoPoint(59404862,17949859)); //kth location
-		mapCon.setZoom(16);		
+			
 	}
 	
 	private class AddLocationOverlay extends Overlay {
