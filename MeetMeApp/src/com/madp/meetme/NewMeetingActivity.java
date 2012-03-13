@@ -236,10 +236,10 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
 				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
-				 LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
-				 Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
-				 meeting.setLatitude(coordinates.getDLatitude());
-				 meeting.setLongitude(coordinates.getDLongitude());
+				// LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
+				 //Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
+				 //meeting.setLatitude(coordinates.getDLatitude());
+				// meeting.setLongitude(coordinates.getDLongitude());
 
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -405,8 +405,8 @@ public class NewMeetingActivity extends ListActivity {
 					int longitude = bundle.getInt("longitude");
 					int latitude = bundle.getInt("latitude");
 					Log.d(TAG, "Received coordinates from gps activity: " + latitude + "::" + longitude);
-					meeting.setLongitude(longitude);
-					meeting.setLatitude(latitude);
+					meeting.setLongitude((double)longitude/1000000);
+					meeting.setLatitude((double)latitude/1000000);
 				} else {
 					Log.e(TAG, "GSP activity didn't return any coordinates");
 				}

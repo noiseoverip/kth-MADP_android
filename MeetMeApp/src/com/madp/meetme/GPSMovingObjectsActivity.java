@@ -3,15 +3,23 @@ package com.madp.meetme;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Paint.Style;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.madp.maps.GPSActivity;
+import com.madp.maps.MyItemizedOverlay;
 import com.madp.meetme.R;
+import com.madp.meetme.GPSMovingObjectsActivity2;
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
@@ -28,6 +36,7 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 	private static final String TAG = "GPSMovingObjectsActivity";
 	private Meeting meeting;//, meetingTMP;
 	private WebService ws;
+	private MyItemizedOverlay usersOverlay;
 	private Context mContext;
 	private List<User> users;
 	Thread Net_worker;
@@ -73,11 +82,12 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 						Log.e(TAG, "Users array was null");
 					}
 					runOnUiThread(new Runnable(){
-
+						
 						@Override
 						public void run() {
+							
 							// TODO Auto-generated method stub
-							DrawAtMap(meeting.getLatitude(),meeting.getLongitude(), meeting.getTitle(), "Meeting location", R.drawable.bluedot);								
+							DrawAtMap(meeting.getLatitude(),meeting.getLongitude(), meeting.getTitle(), "Meeting location", R.drawable.point);								
 							for (int i=0;i<meeting.getParticipants().size();i++ ){
 								DrawAtMap(meeting.getParticipants().get(i).getLatitude(), meeting.getParticipants().get(i).getLongitude(),
 										meeting.getParticipants().get(i).getEmail(), "Android pos", R.drawable.androidmarker);
@@ -112,7 +122,7 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 		
 		mContext = this;
 		
-		// Create webservice
+		// Create web service
 		ws = new WebService(new Logger());
 		
 		Bundle b = getIntent().getExtras();
@@ -149,4 +159,5 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
 }
