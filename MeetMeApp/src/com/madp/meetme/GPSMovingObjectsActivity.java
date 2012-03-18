@@ -63,11 +63,7 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 			while(keep_running){
 				Log.i(TAG, "Updating...");				
 				meeting = (Meeting )ws.getMeeting(meeting.getId());
-				/*	Log.i("GPSMoving Pollserver","user 0 lat"+ meeting.getParticipants().get(0).getLatitude()+
-							"user 0 lon"+ meeting.getParticipants().get(0).getLongitude());
-					Log.i("GPSMoving Pollserver","user 1 lat"+ meeting.getParticipants().get(1).getLatitude()+
-									"user 1 lon"+ meeting.getParticipants().get(1).getLongitude());
-				*/	if (meeting == null) {
+					if (meeting == null) {
 						Log.e(TAG, "Meeting object was null");
 					}
 					try {
@@ -131,7 +127,7 @@ public class GPSMovingObjectsActivity extends GPSActivity {
 			Log.e("Meeting", "De-serilialisation error");
 		}
 		
-		mapcon.animateTo(new GeoPoint((int)meeting.getLatitude()*1000000,(int)meeting.getLongitude()*1000000));
+		mapcon.animateTo(new GeoPoint((int)(meeting.getLatitude()*1000000),(int)(meeting.getLongitude()*1000000)));
 		mapcon.setZoom(10);
 		
 		Net_worker = new Thread(runnable);
