@@ -13,8 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,44 +41,13 @@ public class InvitationActivity extends Activity {
 	private WebService ws;
 	private AlarmManager am;
 	private long timeLeftToMeetingInMillisec;
-	private Meeting meeting;
-	private TextView meetingNameDisplay; 
+	private Meeting meeting;	
 	//meetingInfoDisplay, meetingInfoDisplay2;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.invitation);
-
-		// inform alarm manager
-		String meetingStartsIn = meeting.gettStarting();
-		meetingStartsIn = meetingStartsIn.replaceAll(" ", "-");
-		meetingStartsIn = meetingStartsIn.replaceAll(":", "-");
-		String[] meetingStart = meetingStartsIn.split("-");
-
-		int year = Integer.parseInt(meetingStart[0]);
-		int month = Integer.parseInt(meetingStart[1]);
-		int day = Integer.parseInt(meetingStart[2]);
-		int hour = Integer.parseInt(meetingStart[3]);
-		int min = Integer.parseInt(meetingStart[4]);
-
-		timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
-		setOneTimeAlarm(timeLeftToMeetingInMillisec, meeting.getId());
-
-		// Layout variables
-		String meetingName = meeting.getTitle();
-		meetingNameDisplay = (TextView) findViewById(R.id.meetingName);
-		meetingNameDisplay.setText(meetingName);
-//		String meetingDate = "Date: " + day + "/" + month +"-"+ year;
-//		meetingInfoDisplay = (TextView) findViewById(R.id.meetinInfoDisplay);
-//		meetingInfoDisplay.setText(meetingDate);
-//		String meetingTime = "Starts: " + hour + ":" + min;
-//		meetingInfoDisplay2 = (TextView) findViewById(R.id.meetinInfoDisplay2);
-//		meetingInfoDisplay2.setText(meetingDate);
 		
-		// Bind views
-		//meetingInfo = (TextView) this.findViewById(R.id.meetingInfo);
-
-		String path = getIntent().getData().getEncodedPath();
 		String meetingIdStr = getIntent().getData().getQueryParameter("id");
 		int meetingId = -1;
 		try {
@@ -94,10 +63,12 @@ public class InvitationActivity extends Activity {
 
 		meeting = ws.getMeeting(meetingId);
 		if (meeting == null) {
-			Toast.makeText(this, "Error getting meeting info, check you connection", Toast.LENGTH_SHORT);
+			Toast.makeText(this, "Error getting meeting info, check you connection", Toast.LENGTH_SHORT).show();
 			return;
-		}
-
+		}		
+		Log.d(TAG,"Meeting object:"+meeting);		
+		
+				
 		// Set meeting info		
 		((TextView) this.findViewById(R.id.meetingInfo)).setText(String.format(
 				meetingInfoTmp, 
@@ -106,7 +77,7 @@ public class InvitationActivity extends Activity {
 				meeting.getParticipants().size(), 
 				meeting.getOwner().getEmail()));	
 
-		((Button) this.findViewById(R.id.accept)).setOnClickListener(new OnClickListener() {
+		((ImageButton) this.findViewById(R.id.accept)).setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {		
 				// Get "showLocation checkBox value"
@@ -144,7 +115,7 @@ public class InvitationActivity extends Activity {
 			}
 		});
 
-		((Button) this.findViewById(R.id.decline)).setOnClickListener(new OnClickListener() {
+		((ImageButton) this.findViewById(R.id.decline)).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {				
@@ -165,14 +136,14 @@ public class InvitationActivity extends Activity {
 			}
 		});
 		
-//		((Button) this.findViewById(R.id.showMeetingInfo)).setOnClickListener(new OnClickListener() {
-//
-//			public void onClick(View v) {
-//				Intent a = new Intent(v.getContext(), MeetingInfoActivity.class);
-//				a.putExtra("meeting", SerializerHelper.serializeObject(meeting));
-//				startActivity(a);
-//			}
-//		});
+		((ImageButton) this.findViewById(R.id.showMeetingInfo)).setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				Intent a = new Intent(v.getContext(), MeetingInfoActivity.class);
+				a.putExtra("meeting", SerializerHelper.serializeObject(meeting));
+				startActivity(a);
+			}
+		});
 	}
 
 	/* Turn clock 15 min back */

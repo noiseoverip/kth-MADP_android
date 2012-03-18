@@ -15,7 +15,7 @@
         android:layout_marginTop="0dp" >
 
         <TextView
-            android:id="@+id/infolabel"
+            android:id="@+id/meetingInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -103,7 +103,7 @@
             </ImageButton>
 
             <ImageButton
-                android:id="@+id/meetingInfo"
+                android:id="@+id/showMeetingInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
