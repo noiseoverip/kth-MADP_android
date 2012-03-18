@@ -66,8 +66,10 @@ public class GPSActivity extends MapActivity {
         	MyItemizedOverlay s=(MyItemizedOverlay) mapOverlays.get(i);
         	s.DeleteOverlayItem(id);
         }
-        OverlayItem overlayitem = new OverlayItem(new GeoPoint((int)lat*1000000,(int)lon*1000000),id,snippet);
-        itemizedoverlay.addOverlay(overlayitem);            
+        //OverlayItem overlayitem = new OverlayItem(new GeoPoint(41909831,12494380),id,snippet);
+        
+        OverlayItem overlayitem = new OverlayItem(new GeoPoint((int)(lat*1000000),(int)(lon*1000000)),id,snippet);
+        itemizedoverlay.addOverlay(overlayitem);           
 		mapOverlays.add(itemizedoverlay);
         
     }
