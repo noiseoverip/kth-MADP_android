@@ -24,6 +24,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import com.madp.meetme.common.entities.Meeting;
 import com.madp.meetme.common.entities.User;
 import com.madp.meetme.webapi.WebService;
@@ -228,6 +230,9 @@ public class NewMeetingActivity extends ListActivity {
 		createMeeting.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				
+				final ProgressDialog dialog = ProgressDialog.show(view.getContext(), "", "Saving meeting... ", true);
+				
 				/**
 				 * Currently you must send all the fields
 				 */
@@ -235,11 +240,7 @@ public class NewMeetingActivity extends ListActivity {
 				meeting.setAddress(nameOfPlace.getText().toString());
 				meeting.setDuration(60); // TODO: to be implemented
 				meeting.setMonitoring(20); // TODO: to be implemented
-				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);
-				// LatLonPoint coordinates = getLatLong(getLocationInfo(nameOfPlace.getText().toString()));
-				 //Log.i("Click CreateMeeting NewMeeting.java", "lat = "+coordinates.getDLatitude());
-				 //meeting.setLatitude(coordinates.getDLatitude());
-				// meeting.setLongitude(coordinates.getDLongitude());
+				meeting.settStarting(year + "-" + month + "-" + day + " " + hour + ":" + min);				
 
 				// Set owner
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -249,27 +250,45 @@ public class NewMeetingActivity extends ListActivity {
 
 				// Add owner to participants list
 				meeting.getParticipants().add(owner);
-
+				
+				
 				Intent intent = new Intent(view.getContext(), MeetingsListActivity.class);
 				Bundle s = new Bundle();
 				s.putByteArray("meeting", SerializerHelper.serializeObject(meeting));
 				intent.putExtras(s);
 				setResult(RESULT_OK, intent);
-
-				/* Post the meeting */
-				String response = ws.postMeeting(meeting);
-				int id = -1;
-				try {
-					id = Integer.parseInt(response.split(" ")[1].split(":")[1]);
-				} catch (Exception e) {
-					Log.e(TAG, "Could not parse meeting id from:" + response);
-					Toast.makeText(view.getContext(), "Server error: Could not parse meeting id from:" + response,
-							Toast.LENGTH_LONG);
-				}
-				Log.d(TAG, "Parsed meeting id:" + id);
-				timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
-				setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
-				finish();
+				
+				
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						/* Post the meeting to server, receive generated id*/
+						String response = ws.postMeeting(meeting);
+						int id = -1;
+						try {
+							id = Integer.parseInt(response.split(" ")[1].split(":")[1]);
+						} catch (Exception e) {
+							Log.e(TAG, "Could not parse meeting id from:" + response);							
+						}
+						Log.d(TAG, "Parsed meeting id:" + id);
+						
+						// Set alarm 
+						timeLeftToMeetingInMillisec = TimeToMeetingInLong(year, month, day, hour, min);
+						setOneTimeAlarm(timeLeftToMeetingInMillisec, id);
+						
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								dialog.dismiss();
+								finish();
+								
+							}
+						});
+					}
+				}).start();	
+				
 			}
 		});
 
