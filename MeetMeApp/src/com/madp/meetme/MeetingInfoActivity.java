@@ -65,7 +65,6 @@ public class MeetingInfoActivity extends ListActivity {
 			this.p_adapter = new ParticipantsAdapter(this, R.layout.meetingrow, meeting.getParticipants());
 			getListView().setAdapter(p_adapter);
 			/* Set meeting info */
-			
 			getTime = meeting.gettStarting();
 			
 			String[] result = getTime.split(" ");
@@ -173,6 +172,11 @@ public class MeetingInfoActivity extends ListActivity {
 			if((timeMin-minutes)==0){
 				return timeHour + ":" + (timeMin-minutes)+"0";
 			}
+			
+			if(timeMin-minutes < 10){
+				return timeHour + ":" + "0" + (timeMin-minutes);
+			}
+			
 			return timeHour + ":" + (timeMin-minutes);
  		}
 		else{
